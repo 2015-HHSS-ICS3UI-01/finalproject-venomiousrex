@@ -25,8 +25,8 @@ import javax.swing.JFrame;
 public class Lode extends JComponent implements KeyListener {
 
     // Height and Width of our game
-    static final int WIDTH = 800;
-    static final int HEIGHT = 600;
+    static final int WIDTH = 1255;
+    static final int HEIGHT = 1024;
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
     long desiredFPS = 60;
@@ -73,8 +73,8 @@ public class Lode extends JComponent implements KeyListener {
 
         g.clearRect(0, 0, WIDTH, HEIGHT);
         //Making wall
-        for (int o = 0; o < 12; o++) {
-            for (int i = 0; i < 16; i++) {
+        for (int o = 0; o < 20; o++) {
+            for (int i = 0; i < 30; i++) {
                 g.drawImage(blockImgWall, i * 50, o * 50, this);
 
             }
@@ -137,15 +137,16 @@ public class Lode extends JComponent implements KeyListener {
 
             blocks.add(new Rectangle(0 + 50 * i, 550, 50, 50));
             blocks.add(new Rectangle(350, 300, 50, 50));
+            blocks.add(new Rectangle(600,600, 0+50*i, 69 ))
 
             //separate blocks
             blocks.add(new Rectangle(600, 450, 50, 50));
             blocks.add(new Rectangle(650, 450, 50, 50));
             blocks.add(new Rectangle(700, 450, 50, 50));
             blocks.add(new Rectangle(750, 450, 50, 50));
-            blocks.add(new Rectangle(350,500,50,50));
-            blocks.add(new Rectangle(350,450,50,50));
-            blocks.add(new Rectangle(350,400,50,50));
+            blocks.add(new Rectangle(250,500,50,50));
+            blocks.add(new Rectangle(250,450,50,50));
+            blocks.add(new Rectangle(250,400,50,50));
         }
         for (int i = 0; i < 15; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 0, 50, 50));
@@ -153,7 +154,7 @@ public class Lode extends JComponent implements KeyListener {
         // For ladders
 
         for (int i = 0; i < 15; i++) {
-            ladder.add(new Rectangle(750, 0 + 50 * i, 50, 50));
+            ladder.add(new Rectangle(1200, 0 + 50* i, 50,50 ));
             ladder.add(new Rectangle(400, 450, 50,50));
             ladder.add(new Rectangle(400, 500, 50,50));
             ladder.add(new Rectangle(400,400,50,50));
@@ -188,6 +189,10 @@ public class Lode extends JComponent implements KeyListener {
             }
             if (player.x + 50 > WIDTH) {
                 player.x = WIDTH - 50;
+            }
+            if(player.y > HEIGHT){
+                player.x = 50;
+                player.y = 250;
             }
 
             // Jumps sets dy = -15 (meaning he's in air)
@@ -249,7 +254,7 @@ public class Lode extends JComponent implements KeyListener {
                      climbing = true;
                 } if (down){
                     player.y = player.y + 1;
-                    climbing = true;
+                    
                 }
                    
             }
@@ -276,8 +281,10 @@ public class Lode extends JComponent implements KeyListener {
                         if (overlap.width < overlap.height) {
                             if (player.x < block.x) {
                                 player.x = player.x - overlap.width;
+                                
                             } else {
                                 player.x = player.x + overlap.width;
+                                jump = false;
                             }
                         } else {
                             if (player.y < block.y) {
