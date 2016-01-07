@@ -58,8 +58,11 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] LodeRunR = new BufferedImage[2];
     BufferedImage[] LodeRunL = new BufferedImage[2];
     BufferedImage[] facing = new BufferedImage[2];
+    BufferedImage [] Climbs = new BufferedImage[3];
+    
     boolean up = false;
     int fFrame = 0;
+    int CFrame = 0;
     int frameCount = 0;
     long startTime = 0;
     
@@ -99,6 +102,9 @@ public class Lode extends JComponent implements KeyListener {
             g.drawImage(LodeRunR[frameCount], player.x, player.y, 50, 50, this);
         }else if (left){
             g.drawImage(LodeRunL[frameCount], player.x, player.y, 50, 50, this);
+        }else if (up && climbing ){
+            g.drawImage(Climbs[CFrame], player.x, player.y, 50, 50, this);
+            
         }
 
         for (Rectangle block : blocks) {
@@ -130,6 +136,9 @@ public class Lode extends JComponent implements KeyListener {
         LodeRunR[1] = ImageHelper.loadImage("Loderunner2.png");
         LodeRunL[0] = ImageHelper.loadImage("Loderunner4.png");
         LodeRunL[1] = ImageHelper.loadImage("Loderunner5.png");
+        Climbs [0] = ImageHelper.loadImage("LodeClimb1.png");
+        Climbs [1] = ImageHelper.loadImage("LodeClimb2.png");
+        Climbs [2] = ImageHelper.loadImage("LodeClimb3.png");
        
         
         for (int i = 0; i < 12; i++) {
@@ -137,7 +146,7 @@ public class Lode extends JComponent implements KeyListener {
 
             blocks.add(new Rectangle(0 + 50 * i, 550, 50, 50));
             blocks.add(new Rectangle(350, 300, 50, 50));
-            blocks.add(new Rectangle(600,600, 0+50*i, 69 ))
+            blocks.add(new Rectangle(500 + (50 * i), 600, 50,50));
 
             //separate blocks
             blocks.add(new Rectangle(600, 450, 50, 50));
@@ -155,10 +164,8 @@ public class Lode extends JComponent implements KeyListener {
 
         for (int i = 0; i < 15; i++) {
             ladder.add(new Rectangle(1200, 0 + 50* i, 50,50 ));
-            ladder.add(new Rectangle(400, 450, 50,50));
-            ladder.add(new Rectangle(400, 500, 50,50));
-            ladder.add(new Rectangle(400,400,50,50));
-            ladder.add(new Rectangle(200, 200, 50,50));
+            ladder.add(new Rectangle(400, 0+50*i, 50,50));
+            
         }
         //Dust to collect
         for(int i = 0; i < 5; i++){
@@ -230,11 +237,37 @@ public class Lode extends JComponent implements KeyListener {
                     frameCount = 0;
                     
                 }
-               
+             if(System.currentTimeMillis() - startTime < 5){
+                 startTime = System.currentTimeMillis();
+                 
+                 for(int i = 0; i > 3; i++){
+                     CFrame = i;
+                 }
+                 
+               if(CFrame > 3){
+                   CFrame = 0;
+               }
+             }  
                 
             }
             
-            
+            // Climbs ladder
+            climbing = false;
+              for (Rectangle ladders : ladder) {
+                if (player.intersects(ladders)) {
+                     dy = 0;
+                    climbing = false;
+                   if(up){
+                       player.y = player.y - 1;
+                     climbing = true;
+                     
+                } if (down){
+                    player.y = player.y + 1;
+                    
+                }
+                   
+            }
+            }
            
 
             // Gravity component (pulls ya down)
@@ -243,22 +276,8 @@ public class Lode extends JComponent implements KeyListener {
             }
             // Sets the location once gravity took part
             player.y = player.y + dy;
- // Climbs ladder
-            climbing = false;
-            for (Rectangle ladders : ladder) {
-                if (player.intersects(ladders)) {
-                     dy = 0;
-                    climbing = false;
-                   if(up){
-                       player.y = player.y - 1;
-                     climbing = true;
-                } if (down){
-                    player.y = player.y + 1;
-                    
-                }
-                   
-            }
-            }
+            
+          
             // is there a block under me
             for (Rectangle block : blocks) {
                 // hitting a block
@@ -280,11 +299,13 @@ public class Lode extends JComponent implements KeyListener {
                     } else {
                         if (overlap.width < overlap.height) {
                             if (player.x < block.x) {
+                                
                                 player.x = player.x - overlap.width;
                                 
                             } else {
                                 player.x = player.x + overlap.width;
                                 jump = false;
+                                
                             }
                         } else {
                             if (player.y < block.y) {
