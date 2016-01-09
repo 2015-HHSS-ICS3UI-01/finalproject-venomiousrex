@@ -65,6 +65,7 @@ public class Lode extends JComponent implements KeyListener {
     int CFrame = 0;
     int frameCount = 0;
     long startTime = 0;
+    int levels = 0;
     
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -223,7 +224,7 @@ public class Lode extends JComponent implements KeyListener {
             if(!right && !left){
                 startTime = 0;
                 
-            }
+            }// To determine which he faces when he's idle
             if(right){
                     fFrame = 1;
                 }else if (left){
@@ -237,16 +238,18 @@ public class Lode extends JComponent implements KeyListener {
                     frameCount = 0;
                     
                 }
-             if(System.currentTimeMillis() - startTime < 5){
-                 startTime = System.currentTimeMillis();
+           
+            }
+              if(up&&climbing){
+                 
                  CFrame++;
                 
-               if(CFrame > 3){
+               if(CFrame > 2){
                    CFrame = 0;
                }
-             }  
+             } 
+             
                 
-            }
             
             // Climbs ladder
             climbing = false;
@@ -260,6 +263,7 @@ public class Lode extends JComponent implements KeyListener {
                      
                 } if (down){
                     player.y = player.y + 1;
+                    climbing = true;
                     
                 }
                    
