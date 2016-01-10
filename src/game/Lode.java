@@ -55,8 +55,8 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
     
     // animation aspect of the game
-    BufferedImage[] LodeRunR = new BufferedImage[2];
-    BufferedImage[] LodeRunL = new BufferedImage[2];
+    BufferedImage[] LodeRunR = new BufferedImage[3];
+    BufferedImage[] LodeRunL = new BufferedImage[3];
     BufferedImage[] facing = new BufferedImage[2];
     BufferedImage [] Climbs = new BufferedImage[3];
     
@@ -66,6 +66,7 @@ public class Lode extends JComponent implements KeyListener {
     int frameCount = 0;
     long startTime = 0;
     int levels = 0;
+    
     
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -97,17 +98,20 @@ public class Lode extends JComponent implements KeyListener {
         }
 
         // GAME DRAWING GOES HERE 
+        //If he's standing still
         if(!right && !left && !climbing){
             g.drawImage(facing[fFrame], player.x, player.y,50,50, this);
+            // He moves right animation
         }if (right){
             g.drawImage(LodeRunR[frameCount], player.x, player.y, 50, 50, this);
+            // he moves left animation
         } if (left){
             g.drawImage(LodeRunL[frameCount], player.x, player.y, 50, 50, this);
-        } if (up && climbing ){
+            // if he's climbing 
+        } if (climbing && !right && !left){
             g.drawImage(Climbs[CFrame], player.x, player.y, 50, 50, this);
             
         }
-
         for (Rectangle block : blocks) {
             //g.fill3DRect(block.x, block.y, block.width, block.height, jump);
             g.drawImage(blockImg, block.x, block.y, null);
@@ -135,8 +139,10 @@ public class Lode extends JComponent implements KeyListener {
         facing[1] = ImageHelper.loadImage("LoderunnerE.png");
         LodeRunR[0] = ImageHelper.loadImage("Loderunner1.png");
         LodeRunR[1] = ImageHelper.loadImage("Loderunner2.png");
+        LodeRunR[2] = ImageHelper.loadImage("Loderunner3.png");
         LodeRunL[0] = ImageHelper.loadImage("Loderunner4.png");
         LodeRunL[1] = ImageHelper.loadImage("Loderunner5.png");
+        LodeRunL[2] = ImageHelper.loadImage("Loderunner6.png");
         Climbs [0] = ImageHelper.loadImage("LodeClimb1.png");
         Climbs [1] = ImageHelper.loadImage("LodeClimb2.png");
         Climbs [2] = ImageHelper.loadImage("LodeClimb3.png");
@@ -185,11 +191,11 @@ public class Lode extends JComponent implements KeyListener {
 
             // moves right
             if (right) {
-                player.x = player.x + 5;
+                player.x = player.x + 4;
             }
             // moves left
             if (left) {
-                player.x = player.x - 5;
+                player.x = player.x - 4;
             }
             // Can't escape the window >:)
             if (player.x < 0) {
@@ -234,13 +240,21 @@ public class Lode extends JComponent implements KeyListener {
                 startTime = System.currentTimeMillis();
                 frameCount++;
                 
-                if(frameCount > 1){
+                if(frameCount > 2){
                     frameCount = 0;
                     
                 }
            
             }
-              if(up&&climbing){
+              if( up && climbing){
+                 
+                 CFrame++;
+                
+               if(CFrame > 2){
+                   CFrame = 0;
+               }
+             } 
+              if( down && climbing){
                  
                  CFrame++;
                 
@@ -255,14 +269,14 @@ public class Lode extends JComponent implements KeyListener {
             climbing = false;
               for (Rectangle ladders : ladder) {
                 if (player.intersects(ladders)) {
-                     dy = -1;
-                    climbing = false;
+                     dy = 0;
+                    climbing = true;
                    if(up){
-                       player.y = player.y - 1;
+                       player.y = player.y - 2;
                      climbing = true;
                      
                 } if (down){
-                    player.y = player.y + 1;
+                    player.y = player.y + 2;
                     climbing = true;
                     
                 }
@@ -309,6 +323,7 @@ public class Lode extends JComponent implements KeyListener {
                                 jump = false;
                                 
                             }
+                            // The opposite, if he's under the block
                         } else {
                             if (player.y < block.y) {
                                 player.y = player.y - overlap.height;
@@ -347,7 +362,7 @@ public class Lode extends JComponent implements KeyListener {
             try {
             if (deltaTime > desiredTime) {
                 //took too much time, don't wait
-                Thread.sleep(10);
+                Thread.sleep(20);
             } else {
                 
                     Thread.sleep(desiredTime - deltaTime);
@@ -429,6 +444,9 @@ public class Lode extends JComponent implements KeyListener {
         }
          if(code == KeyEvent.VK_UP){
              up = false;
+             
+                 
+             
         }
          if(code == KeyEvent.VK_DOWN){
              down = false;
