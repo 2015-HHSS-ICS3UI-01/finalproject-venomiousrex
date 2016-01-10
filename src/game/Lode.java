@@ -35,6 +35,7 @@ public class Lode extends JComponent implements KeyListener {
     int gravity = 1;
     // Player's spawn basically
     Rectangle player = new Rectangle(50, 300, 40, 50);
+    Rectangle enemy = new Rectangle(100, 300, 40, 40);
     ArrayList<Rectangle> blocks = new ArrayList<Rectangle>();
     ArrayList<Rectangle> ladder = new ArrayList<Rectangle>();
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
@@ -59,13 +60,20 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] LodeRunL = new BufferedImage[3];
     BufferedImage[] facing = new BufferedImage[2];
     BufferedImage [] Climbs = new BufferedImage[3];
-    
+    BufferedImage [] Jump = new BufferedImage[4];
+    BufferedImage [] Enemy = new BufferedImage[3];
     boolean up = false;
+    //Which way he faces frames
     int fFrame = 0;
+    // falling frames
+    int fall = 0;
+    // Climbing frames
     int CFrame = 0;
+    //Walking frame count
     int frameCount = 0;
     long startTime = 0;
     int levels = 0;
+    int x = 300;
     
     
     // drawing of the game happens in here
@@ -99,7 +107,7 @@ public class Lode extends JComponent implements KeyListener {
 
         // GAME DRAWING GOES HERE 
         //If he's standing still
-        if(!right && !left && !climbing){
+        if(!right && !left && !climbing && !jump){
             g.drawImage(facing[fFrame], player.x, player.y,50,50, this);
             // He moves right animation
         }if (right){
@@ -111,6 +119,10 @@ public class Lode extends JComponent implements KeyListener {
         } if (climbing && !right && !left){
             g.drawImage(Climbs[CFrame], player.x, player.y, 50, 50, this);
             
+        }if(jump && !climbing){
+             g.drawImage(Jump[fall], player.x, player.y, 50, 50, this);
+        }if(dy > 0 && !jump){
+            g.drawImage(Jump[fall], player.x, player.y, 50, 50, this);
         }
         for (Rectangle block : blocks) {
             //g.fill3DRect(block.x, block.y, block.width, block.height, jump);
@@ -120,6 +132,7 @@ public class Lode extends JComponent implements KeyListener {
 
 
         }
+       g.drawImage(Enemy[0], enemy.x, enemy.y,40,40, this);
 
 
 
@@ -146,8 +159,13 @@ public class Lode extends JComponent implements KeyListener {
         Climbs [0] = ImageHelper.loadImage("LodeClimb1.png");
         Climbs [1] = ImageHelper.loadImage("LodeClimb2.png");
         Climbs [2] = ImageHelper.loadImage("LodeClimb3.png");
-       
-        
+        Jump[0] = ImageHelper.loadImage("Lodejump1.png");
+       Jump[1] = ImageHelper.loadImage("Lodejump2.png");
+        Jump[2] = ImageHelper.loadImage("Lodejump3.png");
+        Jump[3] = ImageHelper.loadImage("Lodejump4.png");
+        Enemy[0] = ImageHelper.loadImage("Enemy1.png");
+        Enemy[1] = ImageHelper.loadImage("Enemy2.png");
+        Enemy[2] = ImageHelper.loadImage("Enemy3.png");
         for (int i = 0; i < 12; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 350, 50, 50));
 
@@ -192,6 +210,7 @@ public class Lode extends JComponent implements KeyListener {
             // moves right
             if (right) {
                 player.x = player.x + 4;
+               
             }
             // moves left
             if (left) {
@@ -208,6 +227,8 @@ public class Lode extends JComponent implements KeyListener {
                 player.x = 50;
                 player.y = 250;
             }
+            
+            
 
             // Jumps sets dy = -15 (meaning he's in air)
             if (!jumping && jump && dy == 0 && climbing == false) {
@@ -262,6 +283,21 @@ public class Lode extends JComponent implements KeyListener {
                    CFrame = 0;
                }
              } 
+              // when he falls animation
+              if(dy > 0){
+                  fall++;
+                  if(fall > 1){
+                      fall = 0;
+                  }
+                 
+              }
+               if(fFrame == 0 && dy > 0){
+                      fall = 2;
+                      fall++;
+                      if(fall > 3){
+                          fall = 2;
+                      }
+                  }
              
                 
             
@@ -304,6 +340,7 @@ public class Lode extends JComponent implements KeyListener {
                     if (!left && !right) {
                         if (player.y < block.y) {
                             player.y = player.y - overlap.height;
+                            enemy.y = enemy.y - overlap.height;
                             jumping = false;
                             dy = 0;
                             // If is not on a block 
@@ -362,7 +399,7 @@ public class Lode extends JComponent implements KeyListener {
             try {
             if (deltaTime > desiredTime) {
                 //took too much time, don't wait
-                Thread.sleep(20);
+                Thread.sleep(100);
             } else {
                 
                     Thread.sleep(desiredTime - deltaTime);
