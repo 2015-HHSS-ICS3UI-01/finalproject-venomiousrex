@@ -42,6 +42,7 @@ public class Lode extends JComponent implements KeyListener {
     int ay = -4;
     boolean right = false;
     boolean left = false;
+    boolean up = false;
     boolean jump = false;
     boolean jumping = false;
     boolean climbing = false;
@@ -51,7 +52,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage blockImg2 = ImageHelper.loadImage("block2.png");
     BufferedImage blockImgWall = ImageHelper.loadImage("Wall.png");
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
-    BufferedImage gold = ImageHelper.loadImage("Dust1.png");
+    BufferedImage gold = ImageHelper.loadImage("Dust.png");
     // animation aspect of the game
     BufferedImage[] LodeRunR = new BufferedImage[3];
     BufferedImage[] LodeRunL = new BufferedImage[3];
@@ -60,7 +61,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] JumpR = new BufferedImage[2];
     BufferedImage[] JumpL = new BufferedImage[2];
     BufferedImage[] Enemy = new BufferedImage[3];
-    boolean up = false;
+   
     //Which way he faces frames
     int fFrame = 0;
     // falling frames
@@ -74,6 +75,7 @@ public class Lode extends JComponent implements KeyListener {
     int levels = 0;
     int x = 300;
     int camX = 0;
+    int hmm = 0;
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -127,11 +129,11 @@ public class Lode extends JComponent implements KeyListener {
             if (jump && !climbing) {
                 g.drawImage(JumpR[fallR], player.x, player.y, 50, 50, this);
             }
-            if (dy > 0 && !jump) {
+            if (dy > 0 && !jump && fFrame == 0) {
                 g.drawImage(JumpL[fallL], player.x, player.y, 50, 50, this);
 
             }
-            if (dy > 0 && !jump && fFrame == 1) {
+            if (dy > 0 && !jump && fFrame == 1 ) {
                 g.drawImage(JumpR[fallR], player.x, player.y, 50, 50, this);
             }
             if (right && left) {
@@ -142,6 +144,7 @@ public class Lode extends JComponent implements KeyListener {
                 g.drawImage(blockImg, block.x, block.y, null);
 
                 g.drawImage(blockImg2, 100, 200, this);
+                g.drawImage(gold, 50, 300, this);
 
 
             }
@@ -155,8 +158,10 @@ public class Lode extends JComponent implements KeyListener {
 
     
     public void level1(){
+        
         blocks.clear();;
         ladder.clear();
+       
          for (int i = 0; i < 12; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 350, 50, 50));
 
@@ -172,6 +177,8 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle(250, 500, 50, 50));
             blocks.add(new Rectangle(250, 450, 50, 50));
             blocks.add(new Rectangle(250, 400, 50, 50));
+            blocks.add(new Rectangle(0, 18*50, 50,50));
+            
         }
         for (int i = 0; i < 15; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 0, 50, 50));
@@ -184,13 +191,16 @@ public class Lode extends JComponent implements KeyListener {
 
         }
         //Dust to collect
+        if(hmm == 0){
         for (int i = 0; i < 5; i++) {
-            
+            dust.add(new Rectangle(350, 100, 50,50));
         }
+        
     }
-    
+    }
     // The main game loop
     // In here is where all the logic for my game will go
+    
     public void run() {
         // Used to keep track of time used to draw and update the game
         // This is used to limit the framerate later on
@@ -217,8 +227,6 @@ public class Lode extends JComponent implements KeyListener {
         Enemy[2] = ImageHelper.loadImage("Enemy3.png");
        
         
-        level1();
-
         // the main game loop section
         // game will end if you set done = false;
         boolean done = false;
@@ -228,16 +236,28 @@ public class Lode extends JComponent implements KeyListener {
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
+            
+            
             if (levels == 0) {
-                if(jump){
+                if(up){
                     levels =1;
                 }
+               
+                if(levels == 1){
+                    if(player.y < 0){
+                        levels = 2;
+                    }
+                }
+                
+        level1();
+                
             } else if (levels >= 1) {
                 // moves right
                 if (right) {
                     player.x = player.x + 4;
 
                 }
+                
                 // moves left
                 if (left) {
                     player.x = player.x - 4;
@@ -408,12 +428,20 @@ public class Lode extends JComponent implements KeyListener {
                 }
             }
 
+            for (Rectangle block : dust){
+                 if (player.intersects(block)) {
+                   
+                            
+                           
+                        }
+                        
+            }
 
 
 
 
-
-
+            
+            
 
             // GAME LOGIC ENDS HERE 
 
