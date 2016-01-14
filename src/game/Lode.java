@@ -39,7 +39,7 @@ public class Lode extends JComponent implements KeyListener {
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
     // a variable only made to check if user climbs block
     int dy = 0;
-    int ay = -4;
+    int ay = 0;
     boolean right = false;
     boolean left = false;
     boolean up = false;
@@ -153,7 +153,7 @@ public class Lode extends JComponent implements KeyListener {
                 g.drawImage(gold, 50, 300, this);
 
             }
-            g.drawImage(Enemy[0], enemyx, enemy.y, 40, 40, this);
+            g.drawImage(Enemy[0], enemy.x, enemy.y, 40, 40, this);
 
         }
 
@@ -165,7 +165,7 @@ public class Lode extends JComponent implements KeyListener {
         blocks.clear();;
         ladder.clear();
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 13; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 350, 50, 50));
 
             blocks.add(new Rectangle(0 + 50 * i, 550, 50, 50));
@@ -180,11 +180,18 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle(250, 500, 50, 50));
             blocks.add(new Rectangle(250, 450, 50, 50));
             blocks.add(new Rectangle(250, 400, 50, 50));
-            blocks.add(new Rectangle(0, 18 * 50, 50, 50));
+            blocks.add(new Rectangle(0 + 50 * i, 18 * 50, 50, 50));
+            blocks.add(new Rectangle(13 * 50 + (0 + 50) * i, 900, 50, 50));
+           
 
         }
+        // a 15 blocks platform 
         for (int i = 0; i < 15; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 0, 50, 50));
+        }
+        for (int i = 0; i < 3; i++) {
+            blocks.add(new Rectangle(0 + 50 * i, 14 * 50, 50, 50));
+             blocks.add(new Rectangle(200, 14*50,50,50 ));
         }
         // For ladders
 
@@ -205,8 +212,7 @@ public class Lode extends JComponent implements KeyListener {
     public void level2() {
         blocks.clear();;
         ladder.clear();
-        
-       
+
     }
 
     // The main game loop
@@ -258,21 +264,22 @@ public class Lode extends JComponent implements KeyListener {
             if (levels == 2) {
                 level2();
             } else if (levels >= 1) {
+                
                 // moves right
                 if (right) {
-                    player.x = player.x + 4;
-
+                    player.x = player.x + 5;
+                    enemy.x = enemy.x + 1;
                 }
 
                 // changes levels everytime he reaches the top
-                if (player.y ==  -48) {
+                if (player.y == -48) {
                     levels = 2;
 
                 }
 
                 // moves left
                 if (left) {
-                    player.x = player.x - 4;
+                    player.x = player.x - 5;
                 }
                 // Can't escape the window >:)
                 if (player.x < 0) {
@@ -315,6 +322,13 @@ public class Lode extends JComponent implements KeyListener {
                 if (System.currentTimeMillis() - startTime < 5) {
                     startTime = System.currentTimeMillis();
                     frameCount++;
+
+                    // delays animation 
+                    try {
+                        Thread.sleep(17);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     if (frameCount > 2) {
                         frameCount = 0;
@@ -379,11 +393,12 @@ public class Lode extends JComponent implements KeyListener {
                 // Gravity component (pulls ya down)
                 if (!climbing) {
                     dy = dy + gravity;
+                    ay = ay + gravity;
                 }
                 // Sets the location once gravity took part
-                
+
                 player.y = player.y + dy;
-                
+                enemy.y = enemy.y + ay;
 
                 // is there a block under me
                 for (Rectangle block : blocks) {
@@ -395,13 +410,13 @@ public class Lode extends JComponent implements KeyListener {
                         if (!left && !right) {
                             if (player.y < block.y) {
                                 player.y = player.y - overlap.height;
-                                 
+
                                 jumping = false;
                                 dy = 0;
                                 // If is not on a block 
                             } else {
                                 player.y = player.y + overlap.height;
-                              
+
                                 dy = 0;
                             }
                             //  if he collides with a block as he falls
@@ -410,10 +425,10 @@ public class Lode extends JComponent implements KeyListener {
                                 if (player.x < block.x) {
 
                                     player.x = player.x - overlap.width;
-                                 
+
                                 } else {
                                     player.x = player.x + overlap.width;
-                                   
+
                                     jump = false;
 
                                 }
@@ -421,12 +436,12 @@ public class Lode extends JComponent implements KeyListener {
                             } else {
                                 if (player.y < block.y) {
                                     player.y = player.y - overlap.height;
-                                   
+
                                     jumping = false;
                                     dy = 0;
                                 } else {
                                     player.y = player.y + overlap.height;
-                                
+
                                     dy = 0;
                                 }
                             }
@@ -487,17 +502,14 @@ public class Lode extends JComponent implements KeyListener {
 
             for (Rectangle block : dust) {
                 Rectangle overlap = player.intersection(block);
-              if (player.x > block.x) {
-                        System.out.println("No more cries");
+                if (player.x > block.x) {
+                    System.out.println("No more cries");
                 }
 
                 if (player.intersects(block)) {
-                   
-                
-                   
 
-            
-                }}
+                }
+            }
 
             // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
@@ -509,7 +521,7 @@ public class Lode extends JComponent implements KeyListener {
             try {
                 if (deltaTime > desiredTime) {
                     //took too much time, don't wait
-                    Thread.sleep(20);
+                    Thread.sleep(15);
                 } else {
 
                     Thread.sleep(desiredTime - deltaTime);
