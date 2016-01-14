@@ -33,7 +33,7 @@ public class Lode extends JComponent implements KeyListener {
     int gravity = 1;
     // Player's spawn basically
     Rectangle player = new Rectangle(50, 300, 40, 50);
-    Rectangle enemy = new Rectangle(100, 300, 40, 40);
+    Rectangle enemy = new Rectangle(100, 300, 50, 50);
     ArrayList<Rectangle> blocks = new ArrayList<Rectangle>();
     ArrayList<Rectangle> ladder = new ArrayList<Rectangle>();
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
@@ -121,7 +121,7 @@ public class Lode extends JComponent implements KeyListener {
                 // He moves right animation
             }
             if (right && !left) {
-                g.drawImage(LodeRunR[frameCount], player.x - camX, player.y, 50, 50, this);
+                g.drawImage(LodeRunR[frameCount], player.x, player.y, 50, 50, this);
                 // he moves left animation
             }
             if (left && !right) {
@@ -153,7 +153,7 @@ public class Lode extends JComponent implements KeyListener {
                 g.drawImage(gold, 50, 300, this);
 
             }
-            g.drawImage(Enemy[0], enemy.x, enemy.y, 40, 40, this);
+            g.drawImage(Enemy[0], enemy.x, enemy.y, 50, 50, this);
 
         }
 
@@ -193,6 +193,7 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle(0 + 50 * i, 14 * 50, 50, 50));
              blocks.add(new Rectangle(200, 14*50,50,50 ));
         }
+         blocks.add(new Rectangle(450, 500,50,50 ));
         // For ladders
 
         for (int i = 0; i < 15; i++) {
@@ -268,8 +269,9 @@ public class Lode extends JComponent implements KeyListener {
                 // moves right
                 if (right) {
                     player.x = player.x + 5;
-                    enemy.x = enemy.x + 1;
+                   
                 }
+                 enemy.x = enemy.x + 1;
 
                 // changes levels everytime he reaches the top
                 if (player.y == -48) {
@@ -324,11 +326,7 @@ public class Lode extends JComponent implements KeyListener {
                     frameCount++;
 
                     // delays animation 
-                    try {
-                        Thread.sleep(17);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                  
 
                     if (frameCount > 2) {
                         frameCount = 0;
@@ -339,6 +337,7 @@ public class Lode extends JComponent implements KeyListener {
                 if (up && climbing) {
 
                     CFrame++;
+                   
 
                     if (CFrame > 2) {
                         CFrame = 0;
@@ -393,8 +392,9 @@ public class Lode extends JComponent implements KeyListener {
                 // Gravity component (pulls ya down)
                 if (!climbing) {
                     dy = dy + gravity;
-                    ay = ay + gravity;
+                    
                 }
+                ay = ay + gravity;
                 // Sets the location once gravity took part
 
                 player.y = player.y + dy;
@@ -425,7 +425,7 @@ public class Lode extends JComponent implements KeyListener {
                                 if (player.x < block.x) {
 
                                     player.x = player.x - overlap.width;
-
+                                    
                                 } else {
                                     player.x = player.x + overlap.width;
 
@@ -450,6 +450,15 @@ public class Lode extends JComponent implements KeyListener {
                     }
 
                 }
+                 // interacting with dust
+                for (Rectangle block : dust) {
+                    // hitting a block
+
+                    if (player.intersects(block)) {
+                        Rectangle overlap = player.intersection(block);
+                        System.out.println("d");
+                    }
+                }
                 //Enemy's collison 
                 for (Rectangle block : blocks) {
                     // hitting a block
@@ -457,28 +466,28 @@ public class Lode extends JComponent implements KeyListener {
                     if (enemy.intersects(block)) {
                         Rectangle overlap = enemy.intersection(block);
                         // Once lands on a block
-                        if (!left && !right) {
+                        if (x == 30000) {
                             if (enemy.y < block.y) {
 
                                 enemy.y = enemy.y - overlap.height;
 
-                                dy = 0;
+                                ay = 0;
                                 // If is not on a block 
                             } else {
 
                                 enemy.y = enemy.y + overlap.height;
-                                dy = 0;
+                                ay = 0;
                             }
                             //  if he collides with a block as he falls
                         } else {
                             if (overlap.width < overlap.height) {
                                 if (enemy.x < block.x) {
 
-                                    enemy.y = enemy.y - overlap.width;
+                                    enemy.x = enemy.x - overlap.width;
                                 } else {
 
-                                    enemy.y = enemy.y + overlap.width;
-
+                                    enemy.x = enemy.x + overlap.width;
+                                        jump = false;
                                 }
                                 // The opposite, if he's under the block
                             } else {
@@ -486,19 +495,24 @@ public class Lode extends JComponent implements KeyListener {
 
                                     enemy.y = enemy.y - overlap.height;
 
-                                    dy = 0;
+                                    ay = 0;
                                 } else {
 
                                     enemy.y = enemy.y + overlap.height;
-                                    dy = 0;
+                                    ay = 0;
                                 }
                             }
                         }
 
                     }
+                    
 
                 }
             }
+         
+            
+           
+            
 
             for (Rectangle block : dust) {
                 Rectangle overlap = player.intersection(block);
