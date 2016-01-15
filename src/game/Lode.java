@@ -80,6 +80,7 @@ public class Lode extends JComponent implements KeyListener {
     int camX = 0;
     int hmm = 0;
     int enemyx = 50;
+    boolean enemyFlip = false;
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -189,6 +190,7 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle(250, 400, 50, 50));
             blocks.add(new Rectangle(0 + 50 * i, 18 * 50, 50, 50));
             blocks.add(new Rectangle(13 * 50 + (0 + 50) * i, 900, 50, 50));
+            blocks.add(new Rectangle(0, 300,50,50));
            
 
         }
@@ -215,6 +217,7 @@ public class Lode extends JComponent implements KeyListener {
                 dust.add(new Rectangle(200, 300, 50,50));
                 dust.add(new Rectangle(300, 300, 50,50));
                  dust.add(new Rectangle(400, 300, 50,50));
+                 dust.add(new Rectangle(400,500, 50,50));
             }
 
         }
@@ -282,14 +285,18 @@ public class Lode extends JComponent implements KeyListener {
                     player.x = player.x + 5;
                    
                 }
-                 enemy.x = enemy.x + 1;
-
+                if (enemyFlip){
+                 enemy.x = enemy.x - 1;
+                }
+                if(!enemyFlip){
+                    enemy.x = enemy.x +1;
+                }
                 // changes levels everytime he reaches the top
                 if (player.y == -48) {
                     levels = 2;
 
                 }
-
+              
                 // moves left
                 if (left) {
                     player.x = player.x - 5;
@@ -463,13 +470,13 @@ public class Lode extends JComponent implements KeyListener {
                 }
                 
                 
-                    System.out.println(size);
+                  
                 
                  // interacting with dust
               for (Rectangle block : dust) {
                
                 if (player.x == block.x) {
-                  
+                  pick = false;
                     
                 }
 
@@ -477,6 +484,8 @@ public class Lode extends JComponent implements KeyListener {
 
                 }
             }
+                System.out.println("Enemy y " + enemy.y);
+                System.out.println("Player y " + player.y );
                 //Enemy's collison 
                 for (Rectangle block : blocks) {
                     // hitting a block
@@ -502,10 +511,16 @@ public class Lode extends JComponent implements KeyListener {
                                 if (enemy.x < block.x) {
 
                                     enemy.x = enemy.x - overlap.width;
+                                    // If player isn't on same platform level enemy rotates
+                                    if(player.y != enemy.y - 1){
+                                   enemyFlip = true;
+                                    }
                                 } else {
 
                                     enemy.x = enemy.x + overlap.width;
-                                        jump = false;
+                                    if(player.y != enemy.y - 1){
+                                    enemyFlip = false;
+                                    }
                                 }
                                 // The opposite, if he's under the block
                             } else {
