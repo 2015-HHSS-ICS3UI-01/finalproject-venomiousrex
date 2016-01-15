@@ -25,7 +25,7 @@ public class Lode extends JComponent implements KeyListener {
 
     // Height and Width of our game
     static final int WIDTH = 1255;
-    static final int HEIGHT = 1024;
+    static final int HEIGHT = 1000;
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
     long desiredFPS = 60;
@@ -62,7 +62,9 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] JumpR = new BufferedImage[2];
     BufferedImage[] JumpL = new BufferedImage[2];
     BufferedImage[] Enemy = new BufferedImage[3];
-
+    int[]aryNums = new int [2];
+    boolean pick = true;
+    boolean size = dust.isEmpty();
     //Which way he faces frames
     int fFrame = 0;
     // falling frames
@@ -109,8 +111,9 @@ public class Lode extends JComponent implements KeyListener {
             // Ladders 
             for (Rectangle blocks : ladder) {
                 for (int i = 0; i < 1; i++) {
+                    if(size){
                     g.drawImage(ladderImg, blocks.x, blocks.y, this);
-                }
+                }}
             }
 
             // GAME DRAWING GOES HERE 
@@ -150,9 +153,13 @@ public class Lode extends JComponent implements KeyListener {
                 g.drawImage(blockImg, block.x, block.y, null);
 
                 g.drawImage(blockImg2, 100, 200, this);
-                g.drawImage(gold, 50, 300, this);
+               
 
-            }
+            }// visual aspect of dust 
+            for (Rectangle block: dust){
+                if(pick == true){
+                g.drawImage(gold, block.x, block.y, null);
+            }}
             g.drawImage(Enemy[0], enemy.x, enemy.y, 50, 50, this);
 
         }
@@ -197,18 +204,22 @@ public class Lode extends JComponent implements KeyListener {
         // For ladders
 
         for (int i = 0; i < 15; i++) {
+            if(size){
             ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
             ladder.add(new Rectangle(400, 0 + 50 * i, 50, 50));
-
+            }
         }
         //Dust to collect
-        if (hmm == 1) {
+        if (pick == true) {
             for (int i = 0; i < 5; i++) {
-                dust.add(new Rectangle(350, 100, 50, 50));
+                dust.add(new Rectangle(200, 300, 50,50));
+                dust.add(new Rectangle(300, 300, 50,50));
+                 dust.add(new Rectangle(400, 300, 50,50));
             }
 
         }
     }
+    
 
     public void level2() {
         blocks.clear();;
@@ -450,15 +461,22 @@ public class Lode extends JComponent implements KeyListener {
                     }
 
                 }
+                
+                
+                    System.out.println(size);
+                
                  // interacting with dust
-                for (Rectangle block : dust) {
-                    // hitting a block
-
-                    if (player.intersects(block)) {
-                        Rectangle overlap = player.intersection(block);
-                        System.out.println("d");
-                    }
+              for (Rectangle block : dust) {
+               
+                if (player.x == block.x) {
+                  
+                    
                 }
+
+                if (player.intersects(block)) {
+
+                }
+            }
                 //Enemy's collison 
                 for (Rectangle block : blocks) {
                     // hitting a block
@@ -514,16 +532,7 @@ public class Lode extends JComponent implements KeyListener {
            
             
 
-            for (Rectangle block : dust) {
-                Rectangle overlap = player.intersection(block);
-                if (player.x > block.x) {
-                    System.out.println("No more cries");
-                }
-
-                if (player.intersects(block)) {
-
-                }
-            }
+           
 
             // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
