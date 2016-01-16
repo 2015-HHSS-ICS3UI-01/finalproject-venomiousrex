@@ -32,6 +32,8 @@ public class Lode extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     int gravity = 1;
+    int playerx = 50;
+    int playery = 300;
 
     // Player's spawn basically
     Rectangle player = new Rectangle(50, 300, 40, 50);
@@ -101,6 +103,7 @@ public class Lode extends JComponent implements KeyListener {
         }
 
         if (levels >= 1) {
+
             //Making wall
             for (int o = 0; o < 20; o++) {
                 for (int i = 0; i < 30; i++) {
@@ -176,6 +179,7 @@ public class Lode extends JComponent implements KeyListener {
 
         // GAME DRAWING ENDS HERE
     }
+// List of all levels in order 
 
     public void level1() {
 
@@ -230,9 +234,17 @@ public class Lode extends JComponent implements KeyListener {
     public void level2() {
         blocks.clear();;
         ladder.clear();
-        player.x = 50;
-        player.y = 300;
 
+        for (int i = 0; i < 13; i++) {
+            blocks.add(new Rectangle((0 + 50) * i, 350 - (i * 50), 50, 50));
+        }
+
+    }
+    
+
+    public void level3() {
+        blocks.clear();;
+        ladder.clear();
     }
 
     // The main game loop
@@ -281,9 +293,20 @@ public class Lode extends JComponent implements KeyListener {
                 }
 
             }
+            // once player finishes a level
+            if (player.y < 0) {
+                levels++;
+                player.x = 50;
+                player.y = 300;
+            }
             if (levels == 2) {
                 level2();
-            } else if (levels >= 1) {
+            }
+            if (levels == 3) {
+                level3();
+            }
+
+            if (levels >= 1) {
 
                 // moves right
                 if (right) {
@@ -392,7 +415,7 @@ public class Lode extends JComponent implements KeyListener {
                 if (playerDetected) {
                     if (player.x > enemy.x) {
                         enemy.x = enemy.x + 1;
-                    }else{
+                    } else {
                         enemy.x = enemy.x - 1;
                     }
                 }
@@ -422,9 +445,8 @@ public class Lode extends JComponent implements KeyListener {
                     dy = dy + gravity;
 
                 }
-               
-                // Sets the location once gravity took part
 
+                // Sets the location once gravity took part
                 player.y = player.y + dy;
                 enemy.y = enemy.y + ay;
 
@@ -481,8 +503,11 @@ public class Lode extends JComponent implements KeyListener {
 
                 // interacting with dust
                 Iterator<Rectangle> it = dust.iterator();
+                // While there are more than one dust 
                 while (it.hasNext()) {
+                    // recognizing the dust
                     Rectangle block = it.next();
+                    // If player touches dust, collects it and stores it
                     if (player.intersects(block)) {
                         it.remove();
                         count++;
@@ -490,7 +515,6 @@ public class Lode extends JComponent implements KeyListener {
                     }
 
                 }
-                System.out.println(count);
 
                 //Enemy's collison 
                 for (Rectangle block : blocks) {
@@ -521,7 +545,8 @@ public class Lode extends JComponent implements KeyListener {
                                     if (player.y != enemy.y - 1 && !playerDetected) {
                                         enemyFlip = true;
 
-                                    } if (player.y == enemy.y - 1) {
+                                    }
+                                    if (player.y == enemy.y - 1) {
 
                                         playerDetected = true;
                                     } else {
@@ -530,12 +555,13 @@ public class Lode extends JComponent implements KeyListener {
                                 } else {
 
                                     enemy.x = enemy.x + overlap.width;
-                                    if (player.y != enemy.y - 1&& !playerDetected) {
+                                    if (player.y != enemy.y - 1 && !playerDetected) {
                                         enemyFlip = false;
-                                    } if (player.y == enemy.y - 1 ) {
-                                      
+                                    }
+                                    if (player.y == enemy.y - 1) {
+
                                         playerDetected = true;
-                                    }else{
+                                    } else {
                                         playerDetected = false;
                                     }
                                 }
@@ -557,7 +583,7 @@ public class Lode extends JComponent implements KeyListener {
                     }
 
                 }
-                 ay = ay + gravity;
+                ay = ay + gravity;
             }
 
             // GAME LOGIC ENDS HERE 
