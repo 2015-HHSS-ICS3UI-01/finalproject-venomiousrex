@@ -43,6 +43,7 @@ public class Lode extends JComponent implements KeyListener {
     ArrayList<Rectangle> blocks = new ArrayList<Rectangle>();
     ArrayList<Rectangle> ladder = new ArrayList<Rectangle>();
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
+    ArrayList<Rectangle> enemies = new ArrayList<Rectangle>();
     // a variable only made to check if user climbs block
     int dy = 0;
     int ay = 0;
@@ -60,6 +61,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
     BufferedImage gold = ImageHelper.loadImage("Dust.png");
     BufferedImage title = ImageHelper.loadImage("title.png");
+    BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
     // animation aspect of the game
     BufferedImage[] LodeRunR = new BufferedImage[3];
     BufferedImage[] LodeRunL = new BufferedImage[3];
@@ -167,7 +169,9 @@ public class Lode extends JComponent implements KeyListener {
 
             }
             g.drawImage(Enemy[0], enemy.x, enemy.y, 50, 50, this);
-
+            for (Rectangle block : enemies) {
+                g.drawImage(enemyR, block.x, block.y, this);
+            }
         }
         // To make the ladder that leads up to victory
         for (int i = 0; i < 15; i++) {
@@ -228,6 +232,7 @@ public class Lode extends JComponent implements KeyListener {
         dust.add(new Rectangle(300, 300, 50, 50));
         dust.add(new Rectangle(400, 300, 50, 50));
         dust.add(new Rectangle(400, 500, 50, 50));
+        enemies.add(new Rectangle(50, 300, 50, 50));
 
     }
 
@@ -239,8 +244,13 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle((0 + 50) * i, 350 - (i * 50), 50, 50));
         }
 
+        for (Rectangle block : blocks) {
+            block.y = block.y + 25;
+
+        }
+        
+
     }
-    
 
     public void level3() {
         blocks.clear();;
@@ -283,6 +293,9 @@ public class Lode extends JComponent implements KeyListener {
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
+           
+                
+            
             if (levels == 0) {
                 if (up) {
                     levels = 1;
@@ -299,30 +312,36 @@ public class Lode extends JComponent implements KeyListener {
                 player.x = 50;
                 player.y = 300;
             }
-            if (levels == 2) {
-                level2();
-            }
+
             if (levels == 3) {
                 level3();
             }
 
             if (levels >= 1) {
-
+                if (levels == 2) {
+                    level2();
+                }
                 // moves right
                 if (right) {
                     player.x = player.x + 5;
 
                 }
                 // Enemy going different directions
-                if (enemyFlip) {
+                if (enemyFlip && !playerDetected) {
                     enemy.x = enemy.x - 1;
                 }
-
-                if (!enemyFlip) {
+                if (!enemyFlip && !playerDetected) {
                     enemy.x = enemy.x + 1;
                 }
-                // changes levels everytime he reaches the top
+                if (playerDetected) {
+                    if (enemy.x < player.x) {
+                        enemy.x = enemy.x + 1;
+                    } else if (enemy.x > player.x) {
+                        enemy.x = enemy.x - 1;
+                    }
+                }
 
+                // changes levels everytime he reaches the top
                 // moves left
                 if (left) {
                     player.x = player.x - 5;
@@ -412,14 +431,6 @@ public class Lode extends JComponent implements KeyListener {
                 }
                 // Enemy interactions and configurations
 
-                if (playerDetected) {
-                    if (player.x > enemy.x) {
-                        enemy.x = enemy.x + 1;
-                    } else {
-                        enemy.x = enemy.x - 1;
-                    }
-                }
-
                 // Climbs ladder
                 climbing = false;
                 for (Rectangle ladders : ladder) {
@@ -445,6 +456,7 @@ public class Lode extends JComponent implements KeyListener {
                     dy = dy + gravity;
 
                 }
+                ay = ay + gravity;
 
                 // Sets the location once gravity took part
                 player.y = player.y + dy;
@@ -498,7 +510,68 @@ public class Lode extends JComponent implements KeyListener {
                         }
 
                     }
+                    if(count == 4){
+                    block.y = block.y + 1;
+                    }
+                }
+                // For the bot arrays 
+                for (Rectangle b : blocks) {
+                    for (Rectangle R : enemies) {
+                        if (b.intersects(R)) {
 
+                            Rectangle overlap = enemy.intersection(R);
+                            // Once lands on a block
+                            if (R.y - 1 == player.y) {
+                                if (R.y < b.y) {
+
+                                    R.y = R.y - overlap.height;
+
+                                    ay = 0;
+                                    // If is not on a block 
+                                } else {
+
+                                    R.y = R.y + overlap.height;
+                                    ay = 0;
+                                }
+                                //  if he collides with a block as he falls
+                            } else {
+                                if (overlap.width < overlap.height) {
+                                    if (R.x < b.x) {
+
+                                        R.x = R.x - overlap.width;
+                                        // If player isn't on same platform level enemy rotates
+                                        if (player.y != enemy.y - 1) {
+                                            enemyFlip = true;
+
+                                        }
+
+                                    } else {
+
+                                        R.x = R.x + overlap.width;
+                                        if (player.y != enemy.y - 1) {
+                                            enemyFlip = false;
+                                        }
+                                        System.out.println("WOO");
+                                    }
+                                    // The opposite, if he's under the block
+                                } else {
+                                    if (R.y < b.y) {
+
+                                        R.y = R.y - overlap.height;
+
+                                        ay = 0;
+                                    } else {
+
+                                        R.y = R.y + overlap.height;
+                                        ay = 0;
+
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
                 }
 
                 // interacting with dust
@@ -515,6 +588,11 @@ public class Lode extends JComponent implements KeyListener {
                     }
 
                 }
+                if (player.y == enemy.y - 1) {
+                    playerDetected = true;
+                } else {
+                    playerDetected = false;
+                }
 
                 //Enemy's collison 
                 for (Rectangle block : blocks) {
@@ -523,7 +601,7 @@ public class Lode extends JComponent implements KeyListener {
                     if (enemy.intersects(block)) {
                         Rectangle overlap = enemy.intersection(block);
                         // Once lands on a block
-                        if (x == 30000) {
+                        if (enemy.y - 1 == player.y) {
                             if (enemy.y < block.y) {
 
                                 enemy.y = enemy.y - overlap.height;
@@ -542,28 +620,18 @@ public class Lode extends JComponent implements KeyListener {
 
                                     enemy.x = enemy.x - overlap.width;
                                     // If player isn't on same platform level enemy rotates
-                                    if (player.y != enemy.y - 1 && !playerDetected) {
+                                    if (player.y != enemy.y - 1) {
                                         enemyFlip = true;
 
                                     }
-                                    if (player.y == enemy.y - 1) {
 
-                                        playerDetected = true;
-                                    } else {
-                                        playerDetected = false;
-                                    }
                                 } else {
 
                                     enemy.x = enemy.x + overlap.width;
-                                    if (player.y != enemy.y - 1 && !playerDetected) {
+                                    if (player.y != enemy.y - 1) {
                                         enemyFlip = false;
                                     }
-                                    if (player.y == enemy.y - 1) {
 
-                                        playerDetected = true;
-                                    } else {
-                                        playerDetected = false;
-                                    }
                                 }
                                 // The opposite, if he's under the block
                             } else {
@@ -576,6 +644,7 @@ public class Lode extends JComponent implements KeyListener {
 
                                     enemy.y = enemy.y + overlap.height;
                                     ay = 0;
+
                                 }
                             }
                         }
@@ -583,7 +652,7 @@ public class Lode extends JComponent implements KeyListener {
                     }
 
                 }
-                ay = ay + gravity;
+
             }
 
             // GAME LOGIC ENDS HERE 
