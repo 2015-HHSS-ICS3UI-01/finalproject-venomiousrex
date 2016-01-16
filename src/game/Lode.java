@@ -32,13 +32,12 @@ public class Lode extends JComponent implements KeyListener {
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
     int gravity = 1;
-    int playerx = 50;
-    int playery = 300;
+
     // Player's spawn basically
-    Rectangle player = new Rectangle(playerx, playery, 40, 50);
+    Rectangle player = new Rectangle(50, 300, 40, 50);
     Rectangle enemy = new Rectangle(100, 300, 50, 50);
-    Rectangle enemy2 = new Rectangle(100,400, 50,50);
-    
+    Rectangle enemy2 = new Rectangle(100, 400, 50, 50);
+
     ArrayList<Rectangle> blocks = new ArrayList<Rectangle>();
     ArrayList<Rectangle> ladder = new ArrayList<Rectangle>();
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
@@ -83,7 +82,7 @@ public class Lode extends JComponent implements KeyListener {
     int levels = 0;
     int x = 300;
     int camX = 0;
-    
+    boolean playerDetected = false;
     int count = 0;
     int enemyx = 50;
     boolean enemyFlip = false;
@@ -94,13 +93,12 @@ public class Lode extends JComponent implements KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         // always clear the screen first!
-System.out.println(count);
+
         g.clearRect(0, 0, WIDTH, HEIGHT);
         if (levels == 0) {
-           
+
             g.drawImage(title, 0, 0, this);
         }
-     
 
         if (levels >= 1) {
             //Making wall
@@ -111,20 +109,17 @@ System.out.println(count);
                 }
 
             }// Making lines
-   
+
             for (int i = 0; i <= 30; i++) {
                 g.drawLine(i * 50, 0, i * 50, HEIGHT);
                 g.drawLine(0, i * 50, WIDTH, i * 50);
             }
             // Ladders 
             for (Rectangle blocks : ladder) {
-                for (int i = 0; i < 1; i++) {
-                    if (count == 4) {
-                        g.drawImage(ladderImg, blocks.x, blocks.y, this);
-                    }
-                }
+
+                g.drawImage(ladderImg, blocks.x, blocks.y, this);
+
             }
-       
 
             // GAME DRAWING GOES HERE 
             //If he's standing still
@@ -162,20 +157,22 @@ System.out.println(count);
                 //g.fill3DRect(block.x, block.y, block.width, block.height, jump);
                 g.drawImage(blockImg, block.x, block.y, null);
 
-                
-
-
             }// visual aspect of dust 
             for (Rectangle block : dust) {
-                
-                    g.drawImage(gold, block.x, block.y, null);
-                
+
+                g.drawImage(gold, block.x, block.y, null);
+
             }
             g.drawImage(Enemy[0], enemy.x, enemy.y, 50, 50, this);
 
         }
-      
-       
+        // To make the ladder that leads up to victory
+        for (int i = 0; i < 15; i++) {
+            if (count == 4) {
+                ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
+            }
+
+        }
 
         // GAME DRAWING ENDS HERE
     }
@@ -204,7 +201,6 @@ System.out.println(count);
             blocks.add(new Rectangle(13 * 50 + (0 + 50) * i, 900, 50, 50));
             blocks.add(new Rectangle(0, 300, 50, 50));
 
-
         }
         // a 15 blocks platform 
         for (int i = 0; i < 15; i++) {
@@ -218,29 +214,24 @@ System.out.println(count);
         // For ladders
 
         for (int i = 0; i < 15; i++) {
-            
-                ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
-                ladder.add(new Rectangle(400, 0 + 50 * i, 50, 50));
-            
+
+            ladder.add(new Rectangle(400, 0 + 50 * i, 50, 50));
+
         }
         //Dust to collect
-       
 
-            dust.add(new Rectangle(200, 300, 50, 50));
-            dust.add(new Rectangle(300, 300, 50, 50));
-            dust.add(new Rectangle(400, 300, 50, 50));
-            dust.add(new Rectangle(400, 500, 50, 50));
+        dust.add(new Rectangle(200, 300, 50, 50));
+        dust.add(new Rectangle(300, 300, 50, 50));
+        dust.add(new Rectangle(400, 300, 50, 50));
+        dust.add(new Rectangle(400, 500, 50, 50));
 
-            
-
-        }
-    
+    }
 
     public void level2() {
         blocks.clear();;
         ladder.clear();
-        
-  
+        player.x = 50;
+        player.y = 300;
 
     }
 
@@ -303,16 +294,11 @@ System.out.println(count);
                 if (enemyFlip) {
                     enemy.x = enemy.x - 1;
                 }
-                
+
                 if (!enemyFlip) {
                     enemy.x = enemy.x + 1;
                 }
                 // changes levels everytime he reaches the top
-                if (player.y == -48) {
-                    
-                    levels = 2;
-
-                }
 
                 // moves left
                 if (left) {
@@ -335,6 +321,7 @@ System.out.println(count);
                 if (!jumping && jump && dy == 0 && climbing == false) {
 
                     dy = -15;
+
                     //sets jumping true
                     jumping = true;
 
@@ -361,8 +348,6 @@ System.out.println(count);
                     frameCount++;
 
                     // delays animation 
-
-
                     if (frameCount > 2) {
                         frameCount = 0;
 
@@ -372,7 +357,6 @@ System.out.println(count);
                 if (up && climbing) {
 
                     CFrame++;
-
 
                     if (CFrame > 2) {
                         CFrame = 0;
@@ -403,6 +387,15 @@ System.out.println(count);
                     }
 
                 }
+                // Enemy interactions and configurations
+
+                if (playerDetected) {
+                    if (player.x > enemy.x) {
+                        enemy.x = enemy.x + 1;
+                    }else{
+                        enemy.x = enemy.x - 1;
+                    }
+                }
 
                 // Climbs ladder
                 climbing = false;
@@ -429,13 +422,12 @@ System.out.println(count);
                     dy = dy + gravity;
 
                 }
-                ay = ay + gravity;
+               
                 // Sets the location once gravity took part
 
                 player.y = player.y + dy;
                 enemy.y = enemy.y + ay;
-                
-                
+
                 // is there a block under me
                 for (Rectangle block : blocks) {
                     // hitting a block
@@ -461,12 +453,12 @@ System.out.println(count);
                                 if (player.x < block.x) {
 
                                     player.x = player.x - overlap.width;
+                                    // to avoid moving while in air going right
 
                                 } else {
                                     player.x = player.x + overlap.width;
 
-                                    jump = false;
-
+                                    // to avoid moving while in air going left
                                 }
                                 // The opposite, if he's under the block
                             } else {
@@ -487,9 +479,6 @@ System.out.println(count);
 
                 }
 
-
-                
-
                 // interacting with dust
                 Iterator<Rectangle> it = dust.iterator();
                 while (it.hasNext()) {
@@ -497,9 +486,11 @@ System.out.println(count);
                     if (player.intersects(block)) {
                         it.remove();
                         count++;
-                        
+
                     }
+
                 }
+                System.out.println(count);
 
                 //Enemy's collison 
                 for (Rectangle block : blocks) {
@@ -527,17 +518,25 @@ System.out.println(count);
 
                                     enemy.x = enemy.x - overlap.width;
                                     // If player isn't on same platform level enemy rotates
-                                    if (player.y != enemy.y - 1) {
+                                    if (player.y != enemy.y - 1 && !playerDetected) {
                                         enemyFlip = true;
-                                    } else if (player.y == enemy.y - 1) {
-                                        enemy.y++;
-                                        enemy.x++;
+
+                                    } if (player.y == enemy.y - 1) {
+
+                                        playerDetected = true;
+                                    } else {
+                                        playerDetected = false;
                                     }
                                 } else {
 
                                     enemy.x = enemy.x + overlap.width;
-                                    if (player.y != enemy.y - 1) {
+                                    if (player.y != enemy.y - 1&& !playerDetected) {
                                         enemyFlip = false;
+                                    } if (player.y == enemy.y - 1 ) {
+                                      
+                                        playerDetected = true;
+                                    }else{
+                                        playerDetected = false;
                                     }
                                 }
                                 // The opposite, if he's under the block
@@ -557,15 +556,9 @@ System.out.println(count);
 
                     }
 
-
                 }
+                 ay = ay + gravity;
             }
-
-
-
-
-
-
 
             // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
