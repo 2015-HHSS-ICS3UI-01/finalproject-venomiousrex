@@ -25,7 +25,7 @@ import javax.swing.JFrame;
 public class Lode extends JComponent implements KeyListener {
 
     // Height and Width of our game
-    static final int WIDTH = 1255;
+    static final int WIDTH = 1250;
     static final int HEIGHT = 1000;
     // sets the framerate and delay for our game
     // you just need to select an approproate framerate
@@ -34,6 +34,7 @@ public class Lode extends JComponent implements KeyListener {
     int gravity = 1;
     int playerx = 50;
     int playery = 300;
+    int score = 0;
 
     // Player's spawn basically
     Rectangle player = new Rectangle(50, 300, 40, 50);
@@ -61,6 +62,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
     BufferedImage gold = ImageHelper.loadImage("Dust.png");
     BufferedImage title = ImageHelper.loadImage("title.png");
+     BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.png");
     BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
     // animation aspect of the game
     BufferedImage[] LodeRunR = new BufferedImage[3];
@@ -70,9 +72,9 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] JumpR = new BufferedImage[2];
     BufferedImage[] JumpL = new BufferedImage[2];
     BufferedImage[] Enemy = new BufferedImage[3];
-    int[] aryNums = new int[2];
+    
     boolean pick = true;
-    boolean size = dust.isEmpty();
+    
     //Which way he faces frames
     int fFrame = 0;
     // falling frames
@@ -90,6 +92,8 @@ public class Lode extends JComponent implements KeyListener {
     int count = 0;
     int enemyx = 50;
     boolean enemyFlip = false;
+    int previous = WIDTH - 50;   
+    int[] array = new int[WIDTH/50];
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -103,6 +107,7 @@ public class Lode extends JComponent implements KeyListener {
 
             g.drawImage(title, 0, 0, this);
         }
+    
 
         if (levels >= 1) {
 
@@ -180,16 +185,20 @@ public class Lode extends JComponent implements KeyListener {
             }
 
         }
-
+        // Once the player has fallen.. 
+ if(levels == 2){
+         g.drawImage(gameOver, 0,0, this);
+     }
         // GAME DRAWING ENDS HERE
     }
 // List of all levels in order 
-
+ 
     public void level1() {
 
         blocks.clear();;
         ladder.clear();
 
+      
         for (int i = 0; i < 13; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 350, 50, 50));
 
@@ -208,8 +217,10 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle(0 + 50 * i, 18 * 50, 50, 50));
             blocks.add(new Rectangle(13 * 50 + (0 + 50) * i, 900, 50, 50));
             blocks.add(new Rectangle(0, 300, 50, 50));
+            blocks.add(new Rectangle((0 - 50) * i, -300, 50,50));
 
         }
+      
         // a 15 blocks platform 
         for (int i = 0; i < 15; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 0, 50, 50));
@@ -233,9 +244,31 @@ public class Lode extends JComponent implements KeyListener {
         dust.add(new Rectangle(400, 300, 50, 50));
         dust.add(new Rectangle(400, 500, 50, 50));
         enemies.add(new Rectangle(50, 300, 50, 50));
+    
+        
+        
+         
+       
+        for(int i = 0; i < 24; i++){
+            int randomNumber = (int) (Math.random() * 24) + 1;
+            System.out.println(randomNumber);
+         int random = randomNumber*50;
+         
+       
+         for(int p = 0; p < 20; p++){
+            blocks.add(new Rectangle((0+random)*p, 200, 50, 50));
+            ladder.add(new Rectangle(((0+random)*i)+50, 200, 50, 50));
+        }}
+        
 
+        
+             
+             
     }
-
+   
+       
+           
+    
     public void level2() {
         blocks.clear();;
         ladder.clear();
@@ -243,12 +276,8 @@ public class Lode extends JComponent implements KeyListener {
         for (int i = 0; i < 13; i++) {
             blocks.add(new Rectangle((0 + 50) * i, 350 - (i * 50), 50, 50));
         }
-
-        for (Rectangle block : blocks) {
-            block.y = block.y + 25;
-
-        }
         
+   
 
     }
 
@@ -294,7 +323,8 @@ public class Lode extends JComponent implements KeyListener {
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
            
-                
+         
+           
             
             if (levels == 0) {
                 if (up) {
@@ -306,21 +336,26 @@ public class Lode extends JComponent implements KeyListener {
                 }
 
             }
+           
             // once player finishes a level
             if (player.y < 0) {
                 levels++;
                 player.x = 50;
                 player.y = 300;
             }
-
+          
             if (levels == 3) {
                 level3();
             }
+            
 
             if (levels >= 1) {
                 if (levels == 2) {
                     level2();
                 }
+                   
+            
+
                 // moves right
                 if (right) {
                     player.x = player.x + 5;
@@ -357,7 +392,10 @@ public class Lode extends JComponent implements KeyListener {
                 if (player.y > HEIGHT) {
                     player.x = 50;
                     player.y = 250;
+                    
                 }
+                //respawning enemy
+              
 
                 // Jumps sets dy = -15 (meaning he's in air)
                 if (!jumping && jump && dy == 0 && climbing == false) {
@@ -449,6 +487,7 @@ public class Lode extends JComponent implements KeyListener {
                         }
 
                     }
+                    ladders.y = ladders.y  + 1;
                 }
 
                 // Gravity component (pulls ya down)
@@ -508,11 +547,17 @@ public class Lode extends JComponent implements KeyListener {
                                 }
                             }
                         }
-
+                        if(block.y > HEIGHT){
+                            count++;
+                           
+                            score++;
+                            
+                        }
+                        
                     }
-                    if(count == 4){
-                    block.y = block.y + 1;
-                    }
+                   
+                   block.y = block.y + 1;
+                    
                 }
                 // For the bot arrays 
                 for (Rectangle b : blocks) {
