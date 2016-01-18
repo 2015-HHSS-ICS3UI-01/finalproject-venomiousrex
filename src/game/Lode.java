@@ -249,18 +249,22 @@ public class Lode extends JComponent implements KeyListener {
         
          
        // loop created for the obstacle
-        for(int i = 0; i < 24; i++){
+        for(int i = 0; i < 60; i++){
             int randomNumber = (int) (Math.random() * 23) + 1;
             System.out.println(randomNumber);
          int random = randomNumber*50;
          
        // randomizer for ladder
+       for(int y = 0; y < 60; y= y + 3){
          for(int p = 0; p < 15; p++){
              spawn = 0+random*p;
+             int minus = y*50;
             blocks.add(new Rectangle(spawn, 200, 50, 50));
+         
             
-            ladder.add(new Rectangle(((0+random)*i)+50, 200, 50, 50));
-        }}
+            //Generator for ladders
+            
+        }}}
         
 
         
@@ -489,7 +493,7 @@ public class Lode extends JComponent implements KeyListener {
                         }
 
                     }
-                    ladders.y = ladders.y  + 1;
+                    
                 }
 
                 // Gravity component (pulls ya down)
@@ -555,10 +559,11 @@ public class Lode extends JComponent implements KeyListener {
                             score++;
                             
                         }
-                        
+                        block.y = block.y + 1;
                     }
-                   
                    block.y = block.y + 1;
+               
+                   
                     
                 }
                 // For the bot arrays 
