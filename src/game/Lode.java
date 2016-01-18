@@ -62,7 +62,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
     BufferedImage gold = ImageHelper.loadImage("Dust.png");
     BufferedImage title = ImageHelper.loadImage("title.png");
-     BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.png");
+     BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.jpg");
     BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
     // animation aspect of the game
     BufferedImage[] LodeRunR = new BufferedImage[3];
@@ -74,7 +74,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] Enemy = new BufferedImage[3];
     
     boolean pick = true;
-    
+    int spawn;
     //Which way he faces frames
     int fFrame = 0;
     // falling frames
@@ -248,15 +248,17 @@ public class Lode extends JComponent implements KeyListener {
         
         
          
-       
+       // loop created for the obstacle
         for(int i = 0; i < 24; i++){
-            int randomNumber = (int) (Math.random() * 24) + 1;
+            int randomNumber = (int) (Math.random() * 23) + 1;
             System.out.println(randomNumber);
          int random = randomNumber*50;
          
-       
-         for(int p = 0; p < 20; p++){
-            blocks.add(new Rectangle((0+random)*p, 200, 50, 50));
+       // randomizer for ladder
+         for(int p = 0; p < 15; p++){
+             spawn = 0+random*p;
+            blocks.add(new Rectangle(spawn, 200, 50, 50));
+            
             ladder.add(new Rectangle(((0+random)*i)+50, 200, 50, 50));
         }}
         
@@ -696,6 +698,9 @@ public class Lode extends JComponent implements KeyListener {
 
                     }
 
+                }
+                if(enemy.y > HEIGHT){
+                    enemy.y = 50;
                 }
 
             }
