@@ -35,12 +35,10 @@ public class Lode extends JComponent implements KeyListener {
     int playerx = 50;
     int playery = 300;
     int score = 0;
-
     // Player's spawn basically
     Rectangle player = new Rectangle(50, 300, 40, 50);
     Rectangle enemy = new Rectangle(100, 300, 50, 50);
     Rectangle enemy2 = new Rectangle(100, 400, 50, 50);
-
     ArrayList<Rectangle> blocks = new ArrayList<Rectangle>();
     ArrayList<Rectangle> ladder = new ArrayList<Rectangle>();
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
@@ -60,9 +58,9 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage blockImg2 = ImageHelper.loadImage("block2.png");
     BufferedImage blockImgWall = ImageHelper.loadImage("Wall.png");
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
-    BufferedImage gold = ImageHelper.loadImage("Dust.png");
+    BufferedImage gold = ImageHelper.loadImage("Dust_edited-2.png");
     BufferedImage title = ImageHelper.loadImage("title.png");
-     BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.jpg");
+    BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.jpg");
     BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
     // animation aspect of the game
     BufferedImage[] LodeRunR = new BufferedImage[3];
@@ -72,8 +70,6 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] JumpR = new BufferedImage[2];
     BufferedImage[] JumpL = new BufferedImage[2];
     BufferedImage[] Enemy = new BufferedImage[3];
-     
-     
     boolean pick = true;
     int spawn;
     int spawn2;
@@ -95,8 +91,8 @@ public class Lode extends JComponent implements KeyListener {
     int count = 0;
     int enemyx = 50;
     boolean enemyFlip = false;
-    int previous = WIDTH - 50;   
-    int[] array = new int[WIDTH/50];
+    int previous = WIDTH - 50;
+    
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -110,7 +106,7 @@ public class Lode extends JComponent implements KeyListener {
 
             g.drawImage(title, 0, 0, this);
         }
-    
+
 
         if (levels >= 1) {
 
@@ -181,28 +177,22 @@ public class Lode extends JComponent implements KeyListener {
                 g.drawImage(enemyR, block.x, block.y, this);
             }
         }
-        // To make the ladder that leads up to victory
-        for (int i = 0; i < 15; i++) {
-            if (count == 4) {
-                ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
-            }
 
-        }
         // Once the player has fallen.. 
- if(levels == 2){
-         g.drawImage(gameOver, 0,0, this);
-     }
+        if (levels == 2) {
+            g.drawImage(gameOver, 0, 0, this);
+        }
         // GAME DRAWING ENDS HERE
     }
 // List of all levels in order 
- 
-    public void level1() {
+
+    public void MainLevel() {
 
         blocks.clear();;
         ladder.clear();
 
-      
-      
+
+
         for (int i = 0; i < 13; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 350, 50, 50));
 
@@ -221,10 +211,10 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle(0 + 50 * i, 18 * 50, 50, 50));
             blocks.add(new Rectangle(13 * 50 + (0 + 50) * i, 900, 50, 50));
             blocks.add(new Rectangle(0, 300, 50, 50));
-            blocks.add(new Rectangle((0 - 50) * i, -300, 50,50));
+            blocks.add(new Rectangle((0 - 50) * i, -300, 50, 50));
 
         }
-      
+
         // a 15 blocks platform 
         for (int i = 0; i < 15; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 0, 50, 50));
@@ -248,67 +238,67 @@ public class Lode extends JComponent implements KeyListener {
         dust.add(new Rectangle(400, 300, 50, 50));
         dust.add(new Rectangle(400, 500, 50, 50));
         enemies.add(new Rectangle(50, 300, 50, 50));
-    
-        
-        
-         
-       // loop created for the obstacle
-        for(int i = 0; i < 60; i++){
-            int randomNumber  =(int) (Math.random() * 24) + 1;
-                     int randomNumber2 =(int) (Math.random() * 24) + 1;
-int randomNumber3 =(int) (Math.random() * 24) + 1;
-            System.out.println(randomNumber);
-         int random = randomNumber*50;
-         int random2 = randomNumber2*50;
-         int random3 = randomNumber3*50;
-         
-       // randomizer for ladder
-   
-         for(int p = 0; p < 15; p++){
-             spawn = 0+random*p;
-              spawn2 = 0+random2*p;
-              spawn3 = 0+random3*p;
-             int minus = i*100;
-            if(random != random2){
-             blocks.add(new Rectangle(spawn, 200-minus, 50, 50));
-           blocks.add(new Rectangle(spawn2, 200-minus, 50, 50));
-           blocks.add(new Rectangle(spawn2-50, 200-minus, 50, 50));
-            blocks.add(new Rectangle(spawn3, 200-minus, 50, 50));
-            blocks.add(new Rectangle(spawn3+50, 200-minus, 50, 50));
-                    
-            }
-            // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
-          
-            
-            //Generator for ladders
-            
-        }}
-        
 
-        
-             
-             
+
+
+
+        // loop created for the obstacle
+        for (int i = 0; i < 60; i++) {
+            int randomNumber = (int) (Math.random() * 24) + 1;
+            int randomNumber2 = (int) (Math.random() * 24) + 1;
+            int randomNumber3 = (int) (Math.random() * 24) + 1;
+          
+            int random = randomNumber * 50;
+            int random2 = randomNumber2 * 50;
+            int random3 = randomNumber3 * 50;
+
+            // randomizer for blocks
+
+            for (int p = 0; p < 15; p++) {
+                spawn = 0 + random * p;
+                spawn2 = 0 + random2 * p;
+                spawn3 = 0 + random3 * p;
+                int minus = i * 100;
+                if (random != random2 && random != random3) {
+                    blocks.add(new Rectangle(spawn, 200 - minus, 50, 50));
+                     blocks.add(new Rectangle(spawn, 100 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn - 50, 200 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn2, 200 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn2 + 50, 200 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn3, 200 - minus, 50, 50));
+                   
+
+                }
+                // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
+
+
+                //Generator for ladders
+
+            }
+        }
+
+        // To make the ladder that leads up to victory
+        for (int i = 0; i < 15; i++) {
+            if (count == 4) {
+                ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
+            }
+
+        }
+
+
+
     }
-   
-       
-           
-    
+
     public void level2() {
         blocks.clear();;
         ladder.clear();
 
-        for (int i = 0; i < 13; i++) {
-            blocks.add(new Rectangle((0 + 50) * i, 350 - (i * 50), 50, 50));
-        }
-        
-   
+
+
 
     }
 
-    public void level3() {
-        blocks.clear();;
-        ladder.clear();
-    }
+ 
 
     // The main game loop
     // In here is where all the logic for my game will go
@@ -346,52 +336,75 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
-           
-         
-           
-            
+
+
+
+
             if (levels == 0) {
                 if (up) {
                     levels = 1;
                 }
-
+                // the main level for the game
                 if (levels == 1) {
-                    level1();
+                    MainLevel();
                 }
 
             }
-           
+
             // once player finishes a level
             if (player.y < 0) {
                 levels++;
                 player.x = 50;
                 player.y = 300;
             }
+
           
-            if (levels == 3) {
-                level3();
-            }
-            
+
 
             if (levels >= 1) {
                 if (levels == 2) {
                     level2();
                 }
-                   
-            
 
                 // moves right
                 if (right) {
                     player.x = player.x + 5;
 
                 }
-                // Enemy going different directions
+                // moves left
+                 if (left) {
+                    player.x = player.x - 5;
+                }
+               if (player.x < 0) {
+                    player.x = 0;
+                }
+                // Can't escape right side
+                if (player.x + 50 > WIDTH) {
+                    player.x = WIDTH - 50;
+                }
+                
+                //TEMP
+                if (player.y > HEIGHT) {
+                    player.x = 50;
+                    player.y = 250;
+
+                }
+
+                // changes levels everytime he reaches the top
+           
+               
+                // Can't escape the window >:)
+                
+                //respawning enemy
+                 // Enemy going different directions
                 if (enemyFlip && !playerDetected) {
                     enemy.x = enemy.x - 1;
                 }
+                
                 if (!enemyFlip && !playerDetected) {
                     enemy.x = enemy.x + 1;
                 }
+                // If player on sight, (same y coord) track down
                 if (playerDetected) {
                     if (enemy.x < player.x) {
                         enemy.x = enemy.x + 1;
@@ -399,27 +412,6 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
                         enemy.x = enemy.x - 1;
                     }
                 }
-
-                // changes levels everytime he reaches the top
-                // moves left
-                if (left) {
-                    player.x = player.x - 5;
-                }
-                // Can't escape the window >:)
-                if (player.x < 0) {
-                    player.x = 0;
-                }
-                if (player.x + 50 > WIDTH) {
-                    player.x = WIDTH - 50;
-                }
-
-                if (player.y > HEIGHT) {
-                    player.x = 50;
-                    player.y = 250;
-                    
-                }
-                //respawning enemy
-              
 
                 // Jumps sets dy = -15 (meaning he's in air)
                 if (!jumping && jump && dy == 0 && climbing == false) {
@@ -437,7 +429,7 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
                     frameCount = 0;
 
                 }
-
+                // when he's not moving 
                 if (!right && !left) {
                     startTime = 0;
 
@@ -503,15 +495,14 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
                             player.y = player.y - 2;
                             climbing = true;
 
-                        }
-                        if (down) {
+                        } else if (down) {
                             player.y = player.y + 2;
                             climbing = true;
 
                         }
 
                     }
-                    
+
                 }
 
                 // Gravity component (pulls ya down)
@@ -535,13 +526,13 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
                         if (!left && !right) {
                             if (player.y < block.y) {
                                 player.y = player.y - overlap.height;
-                                 
+
                                 jumping = false;
                                 dy = 0;
                                 // If is not on a block 
                             } else {
                                 player.y = player.y + overlap.height;
-                                
+
                                 dy = 0;
                             }
                             //  if he collides with a block as he falls
@@ -571,25 +562,29 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
                                 }
                             }
                         }
-                        if(block.y > HEIGHT){
+                        if (block.y > HEIGHT) {
                             count++;
-                           
                             score++;
-                            
+
                         }
-                       
+
                     }
-             block.y = block.y +1;
-             if(block.y > HEIGHT){
-                 increase = true;
-             }if(enemy.y > HEIGHT){
-                 increase = false;
-             }
-                 
-                   
-                    
+                    block.y = block.y + 1;
+                    if (block.y > HEIGHT) {
+                        increase = true;
+                    }
+                    if (enemy.y > HEIGHT) {
+                        increase = false;
+                    }
+
+
+
                 }
-                     
+            if (player.intersects(enemy)) {
+                    
+                    levels = 2;
+                }
+
                 // For the bot arrays 
                 for (Rectangle b : blocks) {
                     for (Rectangle R : enemies) {
@@ -627,7 +622,7 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
                                         if (player.y != enemy.y - 1) {
                                             enemyFlip = false;
                                         }
-                                        System.out.println("WOO");
+                                       
                                     }
                                     // The opposite, if he's under the block
                                 } else {
@@ -728,7 +723,7 @@ int randomNumber3 =(int) (Math.random() * 24) + 1;
                     }
 
                 }
-                if(enemy.y > HEIGHT){
+                if (enemy.y > HEIGHT) {
                     enemy.y = 50;
                 }
 
