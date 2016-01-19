@@ -72,9 +72,12 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] JumpR = new BufferedImage[2];
     BufferedImage[] JumpL = new BufferedImage[2];
     BufferedImage[] Enemy = new BufferedImage[3];
-    
+     
+     
     boolean pick = true;
     int spawn;
+    int spawn2;
+    int spawn3;
     //Which way he faces frames
     int fFrame = 0;
     // falling frames
@@ -86,7 +89,7 @@ public class Lode extends JComponent implements KeyListener {
     int frameCount = 0;
     long startTime = 0;
     int levels = 0;
-    int x = 300;
+    boolean increase = false;
     int camX = 0;
     boolean playerDetected = false;
     int count = 0;
@@ -199,6 +202,7 @@ public class Lode extends JComponent implements KeyListener {
         ladder.clear();
 
       
+      
         for (int i = 0; i < 13; i++) {
             blocks.add(new Rectangle(0 + 50 * i, 350, 50, 50));
 
@@ -250,21 +254,35 @@ public class Lode extends JComponent implements KeyListener {
          
        // loop created for the obstacle
         for(int i = 0; i < 60; i++){
-            int randomNumber = (int) (Math.random() * 23) + 1;
+            int randomNumber  =(int) (Math.random() * 24) + 1;
+                     int randomNumber2 =(int) (Math.random() * 24) + 1;
+int randomNumber3 =(int) (Math.random() * 24) + 1;
             System.out.println(randomNumber);
          int random = randomNumber*50;
+         int random2 = randomNumber2*50;
+         int random3 = randomNumber3*50;
          
        // randomizer for ladder
-       for(int y = 0; y < 60; y= y + 3){
+   
          for(int p = 0; p < 15; p++){
              spawn = 0+random*p;
-             int minus = y*50;
-            blocks.add(new Rectangle(spawn, 200, 50, 50));
-         
+              spawn2 = 0+random2*p;
+              spawn3 = 0+random3*p;
+             int minus = i*100;
+            if(random != random2){
+             blocks.add(new Rectangle(spawn, 200-minus, 50, 50));
+           blocks.add(new Rectangle(spawn2, 200-minus, 50, 50));
+           blocks.add(new Rectangle(spawn2-50, 200-minus, 50, 50));
+            blocks.add(new Rectangle(spawn3, 200-minus, 50, 50));
+            blocks.add(new Rectangle(spawn3+50, 200-minus, 50, 50));
+                    
+            }
+            // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
+          
             
             //Generator for ladders
             
-        }}}
+        }}
         
 
         
@@ -517,13 +535,13 @@ public class Lode extends JComponent implements KeyListener {
                         if (!left && !right) {
                             if (player.y < block.y) {
                                 player.y = player.y - overlap.height;
-
+                                 
                                 jumping = false;
                                 dy = 0;
                                 // If is not on a block 
                             } else {
                                 player.y = player.y + overlap.height;
-
+                                
                                 dy = 0;
                             }
                             //  if he collides with a block as he falls
@@ -559,13 +577,19 @@ public class Lode extends JComponent implements KeyListener {
                             score++;
                             
                         }
-                        block.y = block.y + 1;
+                       
                     }
-                   block.y = block.y + 1;
-               
+             block.y = block.y +1;
+             if(block.y > HEIGHT){
+                 increase = true;
+             }if(enemy.y > HEIGHT){
+                 increase = false;
+             }
+                 
                    
                     
                 }
+                     
                 // For the bot arrays 
                 for (Rectangle b : blocks) {
                     for (Rectangle R : enemies) {
