@@ -194,7 +194,7 @@ public class Lode extends JComponent implements KeyListener {
         }
 
         // Once the player has fallen.. GAME OVER
-        if (levels == 2) {
+        if (levels == 3) {
             g.drawImage(gameOver, 0, 0, this);
         }
         // GAME DRAWING ENDS HERE
@@ -206,6 +206,8 @@ public class Lode extends JComponent implements KeyListener {
     public void MainLevel() {
         //clears previous blocks
         blocks.clear();;
+        ladder.clear();
+        
 
         // used to create blocks that are later drawn
         for (int i = 0; i < 13; i++) {
@@ -299,9 +301,102 @@ public class Lode extends JComponent implements KeyListener {
     ////////////////////////////////////////////////////TEMP/////////////////////////////////////
 
     public void level2() {
-        blocks.clear();;
-        ladder.clear();
+       blocks.clear();;
+       
+       
+           for (int i = 0; i < 13; i++) {
+            blocks.add(new Rectangle(0 + 50 * i, 350, 50, 50));
 
+            blocks.add(new Rectangle(0 + 50 * i, 550, 50, 50));
+            blocks.add(new Rectangle(350, 300, 50, 50));
+            blocks.add(new Rectangle(500 + (50 * i), 600, 50, 50));
+
+            //separate blocks
+            blocks.add(new Rectangle(600, 450, 50, 50));
+            blocks.add(new Rectangle(650, 450, 50, 50));
+            blocks.add(new Rectangle(700, 450, 50, 50));
+            blocks.add(new Rectangle(750, 450, 50, 50));
+            blocks.add(new Rectangle(250, 500, 50, 50));
+            blocks.add(new Rectangle(250, 450, 50, 50));
+            blocks.add(new Rectangle(250, 400, 50, 50));
+            blocks.add(new Rectangle(0 + 50 * i, 18 * 50, 50, 50));
+            blocks.add(new Rectangle(13 * 50 + (0 + 50) * i, 900, 50, 50));
+            blocks.add(new Rectangle(0, 300, 50, 50));
+            blocks.add(new Rectangle((0 - 50) * i, -300, 50, 50));
+
+        }
+
+        // a 15 blocks platform 
+        for (int i = 0; i < 15; i++) {
+            blocks.add(new Rectangle(0 + 50 * i, 0, 50, 50));
+        }
+        for (int i = 0; i < 3; i++) {
+            blocks.add(new Rectangle(0 + 50 * i, 14 * 50, 50, 50));
+            blocks.add(new Rectangle(200, 14 * 50, 50, 50));
+        }
+        blocks.add(new Rectangle(450, 500, 50, 50));
+
+        // For ladders
+        for (int i = 0; i < 15; i++) {
+
+            ladder.add(new Rectangle(400, 0 + 50 * i, 50, 50));
+
+        }
+        //Dust to activate the superior GAME
+
+        dust.add(new Rectangle(200, 300, 50, 50));
+        dust.add(new Rectangle(300, 300, 50, 50));
+        dust.add(new Rectangle(400, 300, 50, 50));
+        dust.add(new Rectangle(400, 500, 50, 50));
+        enemies.add(new Rectangle(50, 300, 50, 50));
+
+        // loop created for the obstacle, random generator
+        for (int i = 0; i < 60; i++) {
+            int randomNumber = (int) (Math.random() * 24) + 1;
+            int randomNumber2 = (int) (Math.random() * 24) + 1;
+            int randomNumber3 = (int) (Math.random() * 24) + 1;
+
+            // because the blocks are 50x50
+            int random = randomNumber * 50;
+            int random2 = randomNumber2 * 50;
+            int random3 = randomNumber3 * 50;
+
+            // randomizer for blocks
+            for (int p = 0; p < 15; p++) {
+                spawn = 0 + random * p;
+                spawn2 = 0 + random2 * p;
+                spawn3 = 0 + random3 * p;
+                int minus = i * 100;
+                if (random != random2 && random != random3) {
+                    blocks.add(new Rectangle(spawn, 200 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn, 100 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn - 50, 200 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn2, 200 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn2 + 50, 200 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn3, 200 - minus, 50, 50));
+
+                }
+                // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
+
+                //Generator for ladders
+            }
+        }
+
+        // To make the ladder that leads up to victory
+        for (int i = 0; i < 15; i++) {
+            if (count == 4) {
+                ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
+            }
+
+        }
+
+        
+
+    }
+    public void Death(){
+        if(up){
+            levels = 2;
+        }
     }
 
     // The main game loop
@@ -351,7 +446,10 @@ public class Lode extends JComponent implements KeyListener {
                 if (levels == 1) {
                     MainLevel();
                 }
-
+                if(levels == 3){
+                    Death();
+                }
+                
             }
 
             ////////////////TEMP//////////////
@@ -602,11 +700,12 @@ public class Lode extends JComponent implements KeyListener {
                     if (enemy.y > HEIGHT) {
 
                     }
-
-                }
+                    if(levels == 1){
+                    block.y = block.y + 1;
+                }}
                 if (player.intersects(enemy)) {
 
-                    levels = 2;
+                    levels = 3;
                 }
                 if (enemy.y > HEIGHT) {
                     enemy.y = 50;
