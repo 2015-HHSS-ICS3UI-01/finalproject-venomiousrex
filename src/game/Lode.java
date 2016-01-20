@@ -31,45 +31,34 @@ public class Lode extends JComponent implements KeyListener {
     // you just need to select an approproate framerate
     long desiredFPS = 60;
     long desiredTime = (1000) / desiredFPS;
+    //gravity component
     int gravity = 1;
-    int playerx = 50;
-    int playery = 300;
+    //score to store (HAH)
     int score = 0;
-    // Player's spawn basically
+    // Creates the entity player
     Rectangle player = new Rectangle(50, 300, 40, 50);
+    // creates the entity enemy
     Rectangle enemy = new Rectangle(100, 300, 50, 50);
     Rectangle enemy2 = new Rectangle(100, 400, 50, 50);
+    // An array list used to create MYRIAD of blocks/ladders/dust
     ArrayList<Rectangle> blocks = new ArrayList<Rectangle>();
     ArrayList<Rectangle> ladder = new ArrayList<Rectangle>();
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
     ArrayList<Rectangle> enemies = new ArrayList<Rectangle>();
-    // a variable only made to check if user climbs block
+    //A variable that's created for when player jumps or falls (in air)
     int dy = 0;
+    // Same as dy except it's used for bot
     int ay = 0;
+    // right,left,up,jump,down buttons 
     boolean right = false;
     boolean left = false;
     boolean up = false;
     boolean jump = false;
+    // when player is jumping
     boolean jumping = false;
+    //when player is climbing
     boolean climbing = false;
     boolean down = false;
-    // Images I imported for textures like wall blocks.. etc
-    BufferedImage blockImg = ImageHelper.loadImage("block.png");
-    BufferedImage blockImg2 = ImageHelper.loadImage("block2.png");
-    BufferedImage blockImgWall = ImageHelper.loadImage("Wall.png");
-    BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
-    BufferedImage gold = ImageHelper.loadImage("Dust_edited-2.png");
-    BufferedImage title = ImageHelper.loadImage("title.png");
-    BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.jpg");
-    BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
-    // animation aspect of the game
-    BufferedImage[] LodeRunR = new BufferedImage[3];
-    BufferedImage[] LodeRunL = new BufferedImage[3];
-    BufferedImage[] facing = new BufferedImage[2];
-    BufferedImage[] Climbs = new BufferedImage[3];
-    BufferedImage[] JumpR = new BufferedImage[2];
-    BufferedImage[] JumpL = new BufferedImage[2];
-    BufferedImage[] EnemyAnimation = new BufferedImage[2];
     boolean pick = true;
     int spawn;
     int spawn2;
@@ -83,16 +72,35 @@ public class Lode extends JComponent implements KeyListener {
     int CFrame = 0;
     //Walking frame count
     int frameCount = 0;
-   
+    // used for changing screens (menu, game)
     int levels = 0;
     boolean increase = false;
-    int camX = 0;
+    // A boolean help to track player
     boolean playerDetected = false;
     int count = 0;
+    //Enemy animation frames (where he faces)
     int enemyFrames = 0;
+    //Enemy flipping to different sides
     boolean enemyFlip = false;
-    int previous = WIDTH - 50;
-    
+
+    // Images I imported for textures like wall blocks.. etc
+    BufferedImage blockImg = ImageHelper.loadImage("block.png");
+    BufferedImage blockImg2 = ImageHelper.loadImage("block2.png");
+    BufferedImage blockImgWall = ImageHelper.loadImage("Wall.png");
+    BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
+    BufferedImage gold = ImageHelper.loadImage("Dust_edited-2.png");
+    BufferedImage title = ImageHelper.loadImage("title.png");
+    BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.jpg");
+    BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
+
+// animation aspect of the game
+    BufferedImage[] LodeRunR = new BufferedImage[3];
+    BufferedImage[] LodeRunL = new BufferedImage[3];
+    BufferedImage[] facing = new BufferedImage[2];
+    BufferedImage[] Climbs = new BufferedImage[3];
+    BufferedImage[] JumpR = new BufferedImage[2];
+    BufferedImage[] JumpL = new BufferedImage[2];
+    BufferedImage[] EnemyAnimation = new BufferedImage[2];
 
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
@@ -100,98 +108,104 @@ public class Lode extends JComponent implements KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         // always clear the screen first!
+        // GAME DRAWING GOES HERE 
 
         g.clearRect(0, 0, WIDTH, HEIGHT);
         // Mainscreen
         if (levels == 0) {
-
             g.drawImage(title, 0, 0, this);
         }
 
-       // A condition stating to draw everything on second level
+        // A condition stating to draw everything on second level
         if (levels >= 1) {
-
             //Making wall
             for (int o = 0; o < 20; o++) {
                 for (int i = 0; i < 30; i++) {
                     g.drawImage(blockImgWall, i * 50, o * 50, this);
-
                 }
+            }
 
-            }// Making lines
-
+            // Making lines
             for (int i = 0; i <= 30; i++) {
                 g.drawLine(i * 50, 0, i * 50, HEIGHT);
                 g.drawLine(0, i * 50, WIDTH, i * 50);
             }
-            // Ladders 
+
+            // Building ladders 
             for (Rectangle blocks : ladder) {
-
                 g.drawImage(ladderImg, blocks.x, blocks.y, this);
-
             }
 
-            // GAME DRAWING GOES HERE 
+            ///ANIMATION CONTROLS///
             //If he's standing still
             if (!right && !left && !climbing && !(dy > 0) && !jump) {
                 g.drawImage(facing[fFrame], player.x, player.y, 50, 50, this);
-
-                // He moves right animation
             }
+
+            // He moves right animation
             if (right && !left) {
                 g.drawImage(LodeRunR[frameCount], player.x, player.y, 50, 50, this);
-                // he moves left animation
             }
+
+            // he moves left animation
             if (left && !right) {
                 g.drawImage(LodeRunL[frameCount], player.x, player.y, 50, 50, this);
-                // if he's climbing 
             }
+
+            // if he's climbing 
             if (climbing && !right && !left) {
                 g.drawImage(Climbs[CFrame], player.x, player.y, 50, 50, this);
-                // If he jumps
             }
+
+            // If he jumps
             if (jump && !climbing) {
                 g.drawImage(JumpR[fallR], player.x, player.y, 50, 50, this);
-            }   // if he's falling
+            }
+
+            // if he's falling
             if (dy > 0 && !jump && fFrame == 0) {
                 g.drawImage(JumpL[fallL], player.x, player.y, 50, 50, this);
-
             }
+
+            // if he's in air
             if (dy > 0 && !jump && fFrame == 1) {
                 g.drawImage(JumpR[fallR], player.x, player.y, 50, 50, this);
-            }   // if right and left are pressed
+            }
+
+            // if right and left are pressed
             if (right && left) {
                 g.drawImage(facing[fFrame], player.x, player.y, 50, 50, this);
             }
+
+            //Drawing the blocks that are added
             for (Rectangle block : blocks) {
-                //Drawing the blocks that are added
                 g.drawImage(blockImg, block.x, block.y, null);
-
-            }// visual aspect of dust 
-            for (Rectangle block : dust) {
-
-                g.drawImage(gold, block.x, block.y, null);
-
             }
+
+            // visual aspect of dust (draws dust)
+            for (Rectangle block : dust) {
+                g.drawImage(gold, block.x, block.y, null);
+            }
+
             g.drawImage(EnemyAnimation[enemyFrames], enemy.x, enemy.y, 50, 50, this);
             for (Rectangle block : enemies) {
                 g.drawImage(enemyR, block.x, block.y, this);
             }
         }
 
-        // Once the player has fallen.. 
+        // Once the player has fallen.. GAME OVER
         if (levels == 2) {
             g.drawImage(gameOver, 0, 0, this);
         }
         // GAME DRAWING ENDS HERE
     }
-// List of all levels in order 
+
+    //Different methods 
+    // Main level method (game)
 
     public void MainLevel() {
-       
+        //clears previous blocks
         blocks.clear();;
-        ladder.clear();
-
 
         // used to create blocks that are later drawn
         for (int i = 0; i < 13; i++) {
@@ -225,14 +239,14 @@ public class Lode extends JComponent implements KeyListener {
             blocks.add(new Rectangle(200, 14 * 50, 50, 50));
         }
         blocks.add(new Rectangle(450, 500, 50, 50));
-        // For ladders
 
+        // For ladders
         for (int i = 0; i < 15; i++) {
 
             ladder.add(new Rectangle(400, 0 + 50 * i, 50, 50));
 
         }
-        //Dust to collect
+        //Dust to activate the superior GAME
 
         dust.add(new Rectangle(200, 300, 50, 50));
         dust.add(new Rectangle(300, 300, 50, 50));
@@ -240,21 +254,18 @@ public class Lode extends JComponent implements KeyListener {
         dust.add(new Rectangle(400, 500, 50, 50));
         enemies.add(new Rectangle(50, 300, 50, 50));
 
-
-
-
-        // loop created for the obstacle
+        // loop created for the obstacle, random generator
         for (int i = 0; i < 60; i++) {
             int randomNumber = (int) (Math.random() * 24) + 1;
             int randomNumber2 = (int) (Math.random() * 24) + 1;
             int randomNumber3 = (int) (Math.random() * 24) + 1;
-          
+
+            // because the blocks are 50x50
             int random = randomNumber * 50;
             int random2 = randomNumber2 * 50;
             int random3 = randomNumber3 * 50;
 
             // randomizer for blocks
-
             for (int p = 0; p < 15; p++) {
                 spawn = 0 + random * p;
                 spawn2 = 0 + random2 * p;
@@ -262,19 +273,16 @@ public class Lode extends JComponent implements KeyListener {
                 int minus = i * 100;
                 if (random != random2 && random != random3) {
                     blocks.add(new Rectangle(spawn, 200 - minus, 50, 50));
-                     blocks.add(new Rectangle(spawn, 100 - minus, 50, 50));
+                    blocks.add(new Rectangle(spawn, 100 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn - 50, 200 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn2, 200 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn2 + 50, 200 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn3, 200 - minus, 50, 50));
-                   
 
                 }
                 // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
 
-
                 //Generator for ladders
-
             }
         }
 
@@ -286,20 +294,15 @@ public class Lode extends JComponent implements KeyListener {
 
         }
 
-
-
     }
+
+    ////////////////////////////////////////////////////TEMP/////////////////////////////////////
 
     public void level2() {
         blocks.clear();;
         ladder.clear();
 
-
-
-
     }
-
- 
 
     // The main game loop
     // In here is where all the logic for my game will go
@@ -308,6 +311,7 @@ public class Lode extends JComponent implements KeyListener {
         // This is used to limit the framerate later on
         long startTime;
         long deltaTime;
+
         // all the animation pictures used
         facing[0] = ImageHelper.loadImage("LoderunnerW.png");
         facing[1] = ImageHelper.loadImage("LoderunnerE.png");
@@ -326,7 +330,6 @@ public class Lode extends JComponent implements KeyListener {
         JumpL[1] = ImageHelper.loadImage("Lodejump4.png");
         EnemyAnimation[0] = ImageHelper.loadImage("Enemy3.png");
         EnemyAnimation[1] = ImageHelper.loadImage("Enemy4.png");
-    
 
         // the main game loop section
         // game will end if you set done = false;
@@ -337,14 +340,13 @@ public class Lode extends JComponent implements KeyListener {
 
             // all your game rules and move is done in here
             // GAME LOGIC STARTS HERE 
-
-
-
-
+            // Main menu screen
             if (levels == 0) {
+                //switch to game
                 if (up) {
                     levels = 1;
                 }
+
                 // the main level for the game
                 if (levels == 1) {
                     MainLevel();
@@ -352,16 +354,13 @@ public class Lode extends JComponent implements KeyListener {
 
             }
 
-            // once player finishes a level
+            ////////////////TEMP//////////////
             if (player.y < 0) {
                 levels++;
                 player.x = 50;
                 player.y = 300;
             }
-
-          
-
-
+            // for game not menu
             if (levels >= 1) {
                 if (levels == 2) {
                     level2();
@@ -373,31 +372,24 @@ public class Lode extends JComponent implements KeyListener {
 
                 }
                 // moves left
-                 if (left) {
+                if (left) {
                     player.x = player.x - 5;
                 }
-               if (player.x < 0) {
+                //Can't escape window left side
+                if (player.x < 0) {
                     player.x = 0;
                 }
                 // Can't escape right side
                 if (player.x + 50 > WIDTH) {
                     player.x = WIDTH - 50;
                 }
-                
-                //TEMP
+
+                ////////////////////////////TEMP
                 if (player.y > HEIGHT) {
                     player.x = 50;
                     player.y = 250;
 
                 }
-
-                // changes levels everytime he reaches the top
-           
-               
-                // Can't escape the window >:)
-                
-                //respawning enemy
-               
 
                 // Jumps sets dy = -15 (meaning he's in air)
                 if (!jumping && jump && dy == 0 && climbing == false) {
@@ -425,31 +417,32 @@ public class Lode extends JComponent implements KeyListener {
                 } else if (left) {
                     fFrame = 0;
                 }
+                // frames component
                 if (System.currentTimeMillis() - startTime < 5) {
                     startTime = System.currentTimeMillis();
+                    //moves on to next frame (like flipbook)
                     frameCount++;
 
-                    // delays animation 
+                    // resets animation after all pictures are displayed
                     if (frameCount > 2) {
                         frameCount = 0;
-
                     }
-
                 }
+
                 //Animation for climbing ladder up
                 if (up && climbing) {
-
+                    //adds frames for climbing up
                     CFrame++;
-
+                    //resets frames
                     if (CFrame > 2) {
                         CFrame = 0;
                     }
                 }
                 //Animation for climbing ladder down
                 if (down && climbing) {
-
+                    //add frames for climbing down
                     CFrame++;
-
+                    //resets frames
                     if (CFrame > 2) {
                         CFrame = 0;
                     }
@@ -457,6 +450,7 @@ public class Lode extends JComponent implements KeyListener {
                 // when he falls animation facing right
                 if (dy > 0 && fFrame == 1) {
                     fallR++;
+                    //resets frames
                     if (fallR > 1) {
                         fallR = 0;
                     }
@@ -465,44 +459,52 @@ public class Lode extends JComponent implements KeyListener {
                 // Falling facing left
                 if (fFrame == 0 && dy > 0) {
                     fallL++;
+                    //resets frames
                     if (fallL > 1) {
                         fallL = 0;
-
                     }
-
                 }
+
                 // Enemy interactions and configurations
-                if(!enemyFlip){
+                // determines where enemy faces, in this case he faces right
+                if (!enemyFlip) {
                     enemyFrames = 0;
-                    
-                  
-                }else{
+
+                    // faces left 
+                } else {
                     enemyFrames = 1;
                 }
-                
+                //enemy can't escape window plus, when he hits edges enemy animation flips
                 if (enemy.x < 0) {
                     enemy.x = 0;
                     enemyFlip = false;
                 }
+
                 // Can't escape right side
                 if (enemy.x + 50 > WIDTH) {
                     enemy.x = WIDTH - 50;
                     enemyFlip = true;
                 }
-                  // Enemy going different directions
+
+                // Enemy going different directions
                 if (enemyFlip && !playerDetected) {
                     enemy.x = enemy.x - 1;
                 }
                 
+                //indicates if player and enemy are in same Y level
+                if (player.y == enemy.y - 1) {
+                    playerDetected = true;
+                } else {
+                    playerDetected = false;
+                }
+               
+               
+                // used for walking when enemy not in sight
                 if (!enemyFlip && !playerDetected) {
                     enemy.x = enemy.x + 1;
                 }
-                if(player.y == enemy.y -1){
-                    playerDetected = true;
-                }else{
-                    playerDetected = false;
-                }
-                // If player on sight, (same y coord) track down
+
+                // If player on sight, (same y coord) track him down
                 if (playerDetected) {
                     if (enemy.x < player.x) {
                         enemy.x = enemy.x + 1;
@@ -513,78 +515,76 @@ public class Lode extends JComponent implements KeyListener {
                 // Climbs ladder
                 climbing = false;
                 for (Rectangle ladders : ladder) {
+                    //once on a ladder
                     if (player.intersects(ladders)) {
                         dy = 0;
+                        
+                        //set climbing true
                         climbing = true;
+                        //if up is pressed, player climbs up
                         if (up) {
                             player.y = player.y - 2;
                             climbing = true;
-
+                            
+                        // player climbs down
                         } else if (down) {
                             player.y = player.y + 2;
                             climbing = true;
-
                         }
-
                     }
-
                 }
 
-                // Gravity component (pulls ya down)
+                // Gravity component pulls player down
                 if (!climbing) {
                     dy = dy + gravity;
-
                 }
+                  // Gravity component pulls enemy down
                 ay = ay + gravity;
 
-                // Sets the location once gravity took part
+                // Sets the location once gravity took part of BOTH player and enemy
                 player.y = player.y + dy;
                 enemy.y = enemy.y + ay;
 
-                // is there a block under me
+                // Collisions of player with block
                 for (Rectangle block : blocks) {
                     // hitting a block
-
                     if (player.intersects(block)) {
                         Rectangle overlap = player.intersection(block);
                         // Once lands on a block
                         if (!left && !right) {
                             if (player.y < block.y) {
                                 player.y = player.y - overlap.height;
-
                                 jumping = false;
                                 dy = 0;
+                                
                                 // If is not on a block 
                             } else {
                                 player.y = player.y + overlap.height;
-
                                 dy = 0;
                             }
                             //  if he collides with a block as he falls
                         } else {
+                            //////////////////////////WHERE I LEFT OFF/////////////////////
                             if (overlap.width < overlap.height) {
                                 if (player.x < block.x) {
-
-                                    player.x = player.x - overlap.width;
-                                    // to avoid moving while in air going right
-
+                                    player.x = player.x - overlap.width;  
                                 } else {
                                     player.x = player.x + overlap.width;
-
-                                    // to avoid moving while in air going left
+                                 
                                 }
                                 // The opposite, if he's under the block
                             } else {
                                 if (player.y < block.y) {
                                     player.y = player.y - overlap.height;
-                                    
+
                                     jumping = false;
                                     dy = 0;
                                 } else {
                                     player.y = player.y + overlap.height;
-if(down){                                    
-block.y = block.y - 25;
-}                           dy = 0;
+                                    if (down) {
+                                        block.y = block.y - 25;
+                                    }
+                                    dy = 0;
                                 }
                             }
                         }
@@ -595,22 +595,20 @@ block.y = block.y - 25;
                         }
 
                     }
-                   
+
                     if (block.y > HEIGHT) {
                         increase = true;
                     }
                     if (enemy.y > HEIGHT) {
-                    
+
                     }
 
-
-
                 }
-            if (player.intersects(enemy)) {
-                    
+                if (player.intersects(enemy)) {
+
                     levels = 2;
                 }
-             if (enemy.y > HEIGHT) {
+                if (enemy.y > HEIGHT) {
                     enemy.y = 50;
                     enemy.x = 50;
                 }
@@ -652,7 +650,7 @@ block.y = block.y - 25;
                                         if (player.y != enemy.y - 1) {
                                             enemyFlip = false;
                                         }
-                                       
+
                                     }
                                     // The opposite, if he's under the block
                                 } else {
@@ -689,7 +687,7 @@ block.y = block.y - 25;
                     }
 
                 }
-               
+
                 //Enemy's collison 
                 for (Rectangle block : blocks) {
                     // hitting a block
@@ -748,9 +746,8 @@ block.y = block.y - 25;
                     }
 
                 }
-              
-            } 
 
+            }
 
             // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
