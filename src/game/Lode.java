@@ -85,7 +85,7 @@ public class Lode extends JComponent implements KeyListener {
 
     // Images I imported for textures like wall blocks.. etc
     BufferedImage blockImg = ImageHelper.loadImage("block.png");
-    BufferedImage blockImg2 = ImageHelper.loadImage("block2.png");
+  
     BufferedImage blockImgWall = ImageHelper.loadImage("Wall.png");
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
     BufferedImage gold = ImageHelper.loadImage("Dust_edited-2.png");
@@ -188,9 +188,7 @@ public class Lode extends JComponent implements KeyListener {
             }
 
             g.drawImage(EnemyAnimation[enemyFrames], enemy.x, enemy.y, 50, 50, this);
-            for (Rectangle block : enemies) {
-                g.drawImage(enemyR, block.x, block.y, this);
-            }
+            
         }
 
         // Once the player has fallen.. GAME OVER
@@ -208,6 +206,8 @@ public class Lode extends JComponent implements KeyListener {
         blocks.clear();;
         ladder.clear();
         
+        player.x = 100;
+        player.y = 300;
 
         // used to create blocks that are later drawn
         for (int i = 0; i < 13; i++) {
@@ -254,7 +254,7 @@ public class Lode extends JComponent implements KeyListener {
         dust.add(new Rectangle(300, 300, 50, 50));
         dust.add(new Rectangle(400, 300, 50, 50));
         dust.add(new Rectangle(400, 500, 50, 50));
-        enemies.add(new Rectangle(50, 300, 50, 50));
+        
 
         // loop created for the obstacle, random generator
         for (int i = 0; i < 60; i++) {
@@ -275,12 +275,16 @@ public class Lode extends JComponent implements KeyListener {
                 int minus = i * 100;
                 if (random != random2 && random != random3) {
                     blocks.add(new Rectangle(spawn, 200 - minus, 50, 50));
-                    blocks.add(new Rectangle(spawn, 100 - minus, 50, 50));
+                    
                     blocks.add(new Rectangle(spawn - 50, 200 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn2, 200 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn2 + 50, 200 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn3, 200 - minus, 50, 50));
+                     dust.add(new Rectangle(spawn, (200-minus)-50 , 50, 50));
 
+                }
+                if(random != random2){
+                     
                 }
                 // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
 
@@ -294,6 +298,12 @@ public class Lode extends JComponent implements KeyListener {
                 ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
             }
 
+        }
+        // dust generator
+        for( int i = 0; i < 15; i++){
+            
+            i = i *150; 
+          
         }
 
     }
@@ -311,9 +321,9 @@ public class Lode extends JComponent implements KeyListener {
     }
     public void Death(){
         if(up){
-            levels = 2;
+            levels = 1;
         }
-        System.out.println(levels);
+        
         
     }
 
@@ -365,11 +375,14 @@ public class Lode extends JComponent implements KeyListener {
                     MainLevel();
                 }
                 if(levels == 3){
-                    Death();
+                    if(up){
+                        levels = 1;
+                    }
+                    
                 }
                 
             }
-
+            System.out.println(levels);
             ////////////////TEMP//////////////
             if (player.y < 0) {
                 levels++;
@@ -524,9 +537,11 @@ public class Lode extends JComponent implements KeyListener {
                 if (playerDetected) {
                     if (enemy.x < player.x) {
                         enemy.x = enemy.x + 1;
+                        enemyFrames = 0;
                     } else if (enemy.x > player.x) {
                         enemy.x = enemy.x - 1;
-                    }
+                        enemyFrames = 1;
+                    }                           
                 }
                 // Climbs ladder
                 climbing = false;
@@ -630,65 +645,8 @@ public class Lode extends JComponent implements KeyListener {
                     enemy.x = 50;
                 }
 
-                // For the bot arrays 
-                for (Rectangle b : blocks) {
-                    for (Rectangle R : enemies) {
-                        if (b.intersects(R)) {
-
-                            Rectangle overlap = enemy.intersection(R);
-                            // Once lands on a block
-                            if (R.y - 1 == player.y) {
-                                if (R.y < b.y) {
-
-                                    R.y = R.y - overlap.height;
-
-                                    ay = 0;
-                                    // If is not on a block 
-                                } else {
-
-                                    R.y = R.y + overlap.height;
-                                    ay = 0;
-                                }
-                                //  if he collides with a block as he falls
-                            } else {
-                                if (overlap.width < overlap.height) {
-                                    if (R.x < b.x) {
-
-                                        R.x = R.x - overlap.width;
-                                        // If player isn't on same platform level enemy rotates
-                                        if (player.y != enemy.y - 1) {
-                                            enemyFlip = true;
-
-                                        }
-
-                                    } else {
-
-                                        R.x = R.x + overlap.width;
-                                        if (player.y != enemy.y - 1) {
-                                            enemyFlip = false;
-                                        }
-
-                                    }
-                                    // The opposite, if he's under the block
-                                } else {
-                                    if (R.y < b.y) {
-
-                                        R.y = R.y - overlap.height;
-
-                                        ay = 0;
-                                    } else {
-
-                                        R.y = R.y + overlap.height;
-                                        ay = 0;
-
-                                    }
-                                }
-                            }
-
-                        }
-
-                    }
-                }
+               
+            
 
                 // interacting with dust
                 Iterator<Rectangle> it = dust.iterator();
