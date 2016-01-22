@@ -50,7 +50,7 @@ public class Lode extends JComponent implements KeyListener {
     int dy = 0;
     // Same as dy except it's used for bot
     int ay = 0;
-    int Difficulty = 1;
+  
     // right,left,up,jump,down buttons 
     boolean right = false;
     boolean left = false;
@@ -88,6 +88,8 @@ public class Lode extends JComponent implements KeyListener {
     //Enemy flipping to different sides
     boolean enemyFlip = false;
     boolean dead = false;
+    boolean start = false;
+   
     
 
     // Images I imported for textures like wall blocks.. etc
@@ -97,8 +99,8 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
     BufferedImage gold = ImageHelper.loadImage("Dust_edited-2.png");
     BufferedImage title = ImageHelper.loadImage("title.png");
+    BufferedImage hammer = ImageHelper.loadImage("Lodehammer.png");
     
-    BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
 
 // animation aspect of the game
     BufferedImage[] LodeRunR = new BufferedImage[3];
@@ -189,6 +191,9 @@ public class Lode extends JComponent implements KeyListener {
             if (right && left) {
                 g.drawImage(facing[fFrame], player.x, player.y, 50, 50, this);
             }
+             if (right && left && jump) {
+                g.drawImage(hammer, player.x, player.y, 50, 50, this);
+            }
 
             //Drawing the blocks that are added
             for (Rectangle block : blocks) {
@@ -214,6 +219,7 @@ public class Lode extends JComponent implements KeyListener {
             g.drawImage(GameoverScreen[frames], 0, 0, this);
             g.setFont(myFont);
             g.setColor(Color.RED);
+            //informs player their score
             g.drawString(""+count, 660, 175);
            
             
@@ -269,16 +275,11 @@ public class Lode extends JComponent implements KeyListener {
         // For ladders
         for (int i = 0; i < 15; i++) {
 
-            ladder.add(new Rectangle(400, 0 + 50 * i, 50, 50));
 
         }
         //Dust to activate the superior GAME
 
-        dust.add(new Rectangle(200, 300, 50, 50));
-        dust.add(new Rectangle(300, 300, 50, 50));
-        dust.add(new Rectangle(400, 300, 50, 50));
-        dust.add(new Rectangle(400, 500, 50, 50));
-        
+      
 
         // loop created for the obstacle, random generator
         for (int i = 0; i < 60; i++) {
@@ -315,19 +316,17 @@ public class Lode extends JComponent implements KeyListener {
                 //Generator for ladders
             }
         }
+        
 
         // To make the ladder that leads up to victory
         for (int i = 0; i < 15; i++) {
-          
+
+            ladder.add(new Rectangle(400, 0 + 50 * i, 50, 50));
 
         }
         // dust generator
-        for( int i = 0; i < 15; i++){
-            
-            i = i *150; 
-          
-        }
-
+      
+        start = true;
     }
 
     ////////////////////////////////////////////////////TEMP/////////////////////////////////////
@@ -344,7 +343,7 @@ public class Lode extends JComponent implements KeyListener {
     public void Death(){
         
         if(up){
-            levels = 1;
+            levels = 2;
         }
        
         
@@ -394,14 +393,17 @@ public class Lode extends JComponent implements KeyListener {
                 //switch to game
                 if (up) {
                     levels = 1;
+                    
                 }
 
                 // the main level for the game
-                if (levels == 1) {
+                if (levels == 1 && !start) {
                     MainLevel();
                 }
+                System.out.println(levels);
                 if(levels == 3){
                     Death();
+                    start = false;
                     if(up){
                         levels = 1;
                     }
@@ -409,7 +411,7 @@ public class Lode extends JComponent implements KeyListener {
                 }
                 
             }
-            System.out.println(Difficulty);
+         
             ////////////////TEMP//////////////
            
             // for game not menu
@@ -442,10 +444,8 @@ public class Lode extends JComponent implements KeyListener {
                     player.y = 250;
 
                 }
-                //increase difficulity
-                if(count == 15 ){
-                    Difficulty = 2;
-                }
+             
+                
            
 
                 // Jumps sets dy = -15 (meaning he's in air)
@@ -660,8 +660,9 @@ public class Lode extends JComponent implements KeyListener {
                     }
                    
                     if(count >= 4){
-                    block.y = block.y + Difficulty;
-                }}
+                    block.y = block.y +  1;
+                }
+                }
                 if (player.intersects(enemy)) {
                     dead = true;
                     levels = 3;
@@ -684,6 +685,7 @@ public class Lode extends JComponent implements KeyListener {
                     // If player touches dust, collects it and stores it
                     if (player.intersects(block)) {
                         it.remove();
+                        //adds to score
                         count++;
 
                     }
@@ -753,7 +755,8 @@ public class Lode extends JComponent implements KeyListener {
             //Making dust go down
              for (Rectangle block : dust) {
                  if(count >= 4){
-             block.y = block.y + Difficulty;
+                   
+             block.y = block.y + 1;
              }
              }
 
