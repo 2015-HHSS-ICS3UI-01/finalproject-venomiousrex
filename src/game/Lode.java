@@ -10,6 +10,7 @@ package game;
  */
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -49,6 +50,7 @@ public class Lode extends JComponent implements KeyListener {
     int dy = 0;
     // Same as dy except it's used for bot
     int ay = 0;
+    int Difficulty = 1;
     // right,left,up,jump,down buttons 
     boolean right = false;
     boolean left = false;
@@ -63,6 +65,7 @@ public class Lode extends JComponent implements KeyListener {
     int spawn;
     int spawn2;
     int spawn3;
+    Font myFont = new Font("Arial", Font.BOLD, 150);
     //Which way he faces frames
     int fFrame = 0;
     // falling frames
@@ -77,11 +80,15 @@ public class Lode extends JComponent implements KeyListener {
     boolean increase = false;
     // A boolean help to track player
     boolean playerDetected = false;
+    //Score
     int count = 0;
+    int frames = 0;
     //Enemy animation frames (where he faces)
     int enemyFrames = 0;
     //Enemy flipping to different sides
     boolean enemyFlip = false;
+    boolean dead = false;
+    
 
     // Images I imported for textures like wall blocks.. etc
     BufferedImage blockImg = ImageHelper.loadImage("block.png");
@@ -90,7 +97,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage ladderImg = ImageHelper.loadImage("Ladderz.png");
     BufferedImage gold = ImageHelper.loadImage("Dust_edited-2.png");
     BufferedImage title = ImageHelper.loadImage("title.png");
-    BufferedImage gameOver = ImageHelper.loadImage("GAMEOVER.jpg");
+    
     BufferedImage enemyR = ImageHelper.loadImage("Enemy1.png");
 
 // animation aspect of the game
@@ -101,7 +108,8 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage[] JumpR = new BufferedImage[2];
     BufferedImage[] JumpL = new BufferedImage[2];
     BufferedImage[] EnemyAnimation = new BufferedImage[2];
-
+    BufferedImage[] Dino = new BufferedImage[2];
+    BufferedImage[] GameoverScreen = new BufferedImage[2];
     // drawing of the game happens in here
     // we use the Graphics object, g, to perform the drawing
     // NOTE: This is already double buffered!(helps with framerate/speed)
@@ -130,6 +138,11 @@ public class Lode extends JComponent implements KeyListener {
                 g.drawLine(i * 50, 0, i * 50, HEIGHT);
                 g.drawLine(0, i * 50, WIDTH, i * 50);
             }
+            //Spawns the ultra powered Dinosaur
+            if (count >= 4){
+                    g.drawImage(Dino[fFrame], 750, 300, null);
+                }
+           
 
             // Building ladders 
             for (Rectangle blocks : ladder) {
@@ -192,9 +205,20 @@ public class Lode extends JComponent implements KeyListener {
         }
 
         // Once the player has fallen.. GAME OVER
-        if (levels == 3) {
-            g.drawImage(gameOver, 0, 0, this);
+        if (dead) {
+             frames++;
+            if(frames > 1){
+                frames = 0;
+            }
+            System.out.println(frames);
+            g.drawImage(GameoverScreen[frames], 0, 0, this);
+            g.setFont(myFont);
+            g.setColor(Color.RED);
+            g.drawString(""+count, 660, 175);
+           
+            
         }
+             
         // GAME DRAWING ENDS HERE
     }
 
@@ -273,18 +297,18 @@ public class Lode extends JComponent implements KeyListener {
                 spawn2 = 0 + random2 * p;
                 spawn3 = 0 + random3 * p;
                 int minus = i * 100;
-                if (random != random2 && random != random3) {
+                if (random != random2 ) {
                     blocks.add(new Rectangle(spawn, 200 - minus, 50, 50));
                     
                     blocks.add(new Rectangle(spawn - 50, 200 - minus, 50, 50));
                     blocks.add(new Rectangle(spawn2, 200 - minus, 50, 50));
-                    blocks.add(new Rectangle(spawn2 + 50, 200 - minus, 50, 50));
+                   
                     blocks.add(new Rectangle(spawn3, 200 - minus, 50, 50));
-                     dust.add(new Rectangle(spawn, (200-minus)-50 , 50, 50));
+                     blocks.add(new Rectangle(spawn3+50, 200 - minus, 50, 50));
 
                 }
                 if(random != random2){
-                     
+                     dust.add(new Rectangle((spawn) + 200, (200-minus)-50 , 50, 50));
                 }
                 // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
 
@@ -294,9 +318,7 @@ public class Lode extends JComponent implements KeyListener {
 
         // To make the ladder that leads up to victory
         for (int i = 0; i < 15; i++) {
-            if (count == 4) {
-                ladder.add(new Rectangle(1200, 0 + 50 * i, 50, 50));
-            }
+          
 
         }
         // dust generator
@@ -320,10 +342,11 @@ public class Lode extends JComponent implements KeyListener {
 
     }
     public void Death(){
+        
         if(up){
             levels = 1;
         }
-        
+       
         
     }
 
@@ -353,7 +376,10 @@ public class Lode extends JComponent implements KeyListener {
         JumpL[1] = ImageHelper.loadImage("Lodejump4.png");
         EnemyAnimation[0] = ImageHelper.loadImage("Enemy3.png");
         EnemyAnimation[1] = ImageHelper.loadImage("Enemy4.png");
-
+        Dino[0] = ImageHelper.loadImage("Dino1.png");
+        Dino[1] = ImageHelper.loadImage("Dino2.png");
+GameoverScreen[0] = ImageHelper.loadImage("GAMEOVER.jpg");
+GameoverScreen[1] = ImageHelper.loadImage("GAMEOVER2.jpg");
         // the main game loop section
         // game will end if you set done = false;
         boolean done = false;
@@ -375,6 +401,7 @@ public class Lode extends JComponent implements KeyListener {
                     MainLevel();
                 }
                 if(levels == 3){
+                    Death();
                     if(up){
                         levels = 1;
                     }
@@ -382,13 +409,9 @@ public class Lode extends JComponent implements KeyListener {
                 }
                 
             }
-            System.out.println(levels);
+            System.out.println(Difficulty);
             ////////////////TEMP//////////////
-            if (player.y < 0) {
-                levels++;
-                player.x = 50;
-                player.y = 300;
-            }
+           
             // for game not menu
             if (levels >= 1) {
                 if (levels == 2) {
@@ -419,6 +442,11 @@ public class Lode extends JComponent implements KeyListener {
                     player.y = 250;
 
                 }
+                //increase difficulity
+                if(count == 15 ){
+                    Difficulty = 3;
+                }
+           
 
                 // Jumps sets dy = -15 (meaning he's in air)
                 if (!jumping && jump && dy == 0 && climbing == false) {
@@ -619,26 +647,25 @@ public class Lode extends JComponent implements KeyListener {
                                 }
                             }
                         }
-                        if (block.y > HEIGHT) {
-                            count++;
-                            score++;
+                        
+                           
+                            
 
-                        }
+                        
 
                     }
 
                     if (block.y > HEIGHT) {
                         increase = true;
                     }
-                    if (enemy.y > HEIGHT) {
-
-                    }
-                    if(levels == 1){
-                    block.y = block.y + 1;
+                   
+                    if(count >= 4){
+                    block.y = block.y + Difficulty;
                 }}
                 if (player.intersects(enemy)) {
-
+                    dead = true;
                     levels = 3;
+                    
                 }
                 if (enemy.y > HEIGHT) {
                     enemy.y = 50;
@@ -723,6 +750,12 @@ public class Lode extends JComponent implements KeyListener {
                 }
 
             }
+            //Making dust go down
+             for (Rectangle block : dust) {
+                 if(count >= 4){
+             block.y = block.y + 1;
+             }
+             }
 
             // GAME LOGIC ENDS HERE 
             // update the drawing (calls paintComponent)
