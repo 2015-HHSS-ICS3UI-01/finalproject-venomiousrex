@@ -307,8 +307,8 @@ public class Lode extends JComponent implements KeyListener {
                      blocks.add(new Rectangle(spawn3+50, 200 - minus, 50, 50));
 
                 }
-                if(random != random2){
-                     dust.add(new Rectangle((spawn) + 200, (200-minus)-50 , 50, 50));
+                if(random != random2 && random != random3){
+                     dust.add(new Rectangle(spawn, (200-minus)-50 , 50, 50));
                 }
                 // FIX GENERATOR// ADD MUSIC// FIX SOME COLLISON BUGS // REDUCE LAG
 
@@ -444,7 +444,7 @@ GameoverScreen[1] = ImageHelper.loadImage("GAMEOVER2.jpg");
                 }
                 //increase difficulity
                 if(count == 15 ){
-                    Difficulty = 3;
+                    Difficulty = 2;
                 }
            
 
@@ -753,7 +753,7 @@ GameoverScreen[1] = ImageHelper.loadImage("GAMEOVER2.jpg");
             //Making dust go down
              for (Rectangle block : dust) {
                  if(count >= 4){
-             block.y = block.y + 1;
+             block.y = block.y + Difficulty;
              }
              }
 
