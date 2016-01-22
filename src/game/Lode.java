@@ -378,8 +378,8 @@ public class Lode extends JComponent implements KeyListener {
         EnemyAnimation[1] = ImageHelper.loadImage("Enemy4.png");
         Dino[0] = ImageHelper.loadImage("Dino1.png");
         Dino[1] = ImageHelper.loadImage("Dino2.png");
-GameoverScreen[0] = ImageHelper.loadImage("GAMEOVER.jpg");
-GameoverScreen[1] = ImageHelper.loadImage("GAMEOVER2.jpg");
+        GameoverScreen[0] = ImageHelper.loadImage("GAMEOVER.jpg");
+        GameoverScreen[1] = ImageHelper.loadImage("GAMEOVER2.jpg");
         // the main game loop section
         // game will end if you set done = false;
         boolean done = false;
