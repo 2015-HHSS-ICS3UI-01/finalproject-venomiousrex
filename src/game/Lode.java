@@ -40,7 +40,7 @@ public class Lode extends JComponent implements KeyListener {
     Rectangle player = new Rectangle(50, 300, 40, 50);
     // creates the entity enemy
     Rectangle enemy = new Rectangle(100, 500, 50, 50);
-    // An array list used to create MYRIAD of blocks/ladders/dust
+    // An array list used to create MYRIAD of blocks/ladders/dust/rocks
     ArrayList<Rectangle> blocks = new ArrayList<Rectangle>();
     ArrayList<Rectangle> ladder = new ArrayList<Rectangle>();
     ArrayList<Rectangle> dust = new ArrayList<Rectangle>();
@@ -94,6 +94,7 @@ public class Lode extends JComponent implements KeyListener {
     BufferedImage gold = ImageHelper.loadImage("Dust_edited-2.png");
     BufferedImage title = ImageHelper.loadImage("title.png");
     BufferedImage instructions = ImageHelper.loadImage("Instructions.png");
+    //Hammer for the might lode champion
     BufferedImage hammer = ImageHelper.loadImage("Lodehammer.png");
     BufferedImage rock = ImageHelper.loadImage("rock.png");
 
@@ -211,6 +212,7 @@ public class Lode extends JComponent implements KeyListener {
             //Animation for enemy movement
             g.drawImage(EnemyAnimation[enemyFrames], enemy.x, enemy.y, 50, 50, this);
 
+            //Draws the rocks that are added
             for (Rectangle block : rocks) {
 
                 g.drawImage(rock, block.x, block.y, null);
@@ -249,8 +251,11 @@ public class Lode extends JComponent implements KeyListener {
     public void MainLevel() {
         //clears previous blocks when player dies
         blocks.clear();;
+        //clears ladders
         ladder.clear();
+        //clears dust
         dust.clear();
+        //clears rocks
         rocks.clear();
         // resets score
         count = 0;
@@ -423,7 +428,7 @@ public class Lode extends JComponent implements KeyListener {
                     player.x = WIDTH - 50;
                 }
 
-                ////////////////////////////TEMP
+                //Whenever player falls, he respawns nearest block
                 if (player.y > HEIGHT) {
                     player.x = 50;
                     player.y = 250;
