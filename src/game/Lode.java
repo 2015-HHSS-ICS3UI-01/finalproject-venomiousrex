@@ -234,6 +234,7 @@ public class Lode extends JComponent implements KeyListener {
             //informs player their score
             g.drawString("" + count, 660, 175);
 
+            // plays the game
             if (up) {
                 levels = 0;
 
@@ -294,7 +295,7 @@ public class Lode extends JComponent implements KeyListener {
         }
 
         // loop created for the obstacle, random generator
-        for (int i = 0; i < 600; i++) {
+        for (int i = 0; i < 100 ; i++) {
             //Bunch of random number generators
             int randomNumber = (int) (Math.random() * 24) + 1;
             int randomNumber2 = (int) (Math.random() * 24) + 1;
@@ -377,6 +378,7 @@ public class Lode extends JComponent implements KeyListener {
         // game will end if you set done = false;
         boolean done = false;
         while (!done) {
+           
             // determines when we started so we can keep a framerate
             startTime = System.currentTimeMillis();
 
@@ -389,6 +391,7 @@ public class Lode extends JComponent implements KeyListener {
                     levels = 1;
                     start = true;
                 }
+                //Show instructions
                 if (down) {
                     levels = 5;
                 }
@@ -399,7 +402,7 @@ public class Lode extends JComponent implements KeyListener {
                 }
             }
 
-            // for game not menu
+            // for game not menu nor death screen
             if (levels >= 1 && levels != 5 && dead == false) {
 
                 // moves right
@@ -630,7 +633,8 @@ public class Lode extends JComponent implements KeyListener {
                                 }
                             }
                         }
-                        if(count >= 40){
+                        //makes rocks fall
+                        if(count >= 10){
                             block.y = block.y + 1;
                         }
                     }
@@ -722,7 +726,7 @@ public class Lode extends JComponent implements KeyListener {
                 Rectangle overlap = player.intersection(block);
 
                 //Once player collects 40 or over dust, rocks fall
-                if (count >= 40) {
+                if (count >= 10) {
                     block.y = block.y + 2;
 
                     //if player touches rock
