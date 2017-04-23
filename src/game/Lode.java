@@ -18,6 +18,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -165,6 +167,8 @@ public class Lode extends JComponent implements KeyListener {
             // He moves right animation
             if (right && !left) {
                 g.drawImage(LodeRunR[frameCount], player.x, player.y, 50, 50, this);
+                
+                
             }
 
             // he moves left animation
@@ -447,8 +451,10 @@ public class Lode extends JComponent implements KeyListener {
 
                 // animation
                 if (right && startTime == 0) {
+                    
                     startTime = System.currentTimeMillis();
                     frameCount = 0;
+                 
 
                 }
                 // when he's not moving 
